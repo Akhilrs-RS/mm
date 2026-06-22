@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import Home from './components/Home'
 import Catalogue from './components/Catalogue'
+import Collections from './components/Collections'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
@@ -10,6 +11,9 @@ function App() {
       const hash = window.location.hash
       if (hash === '#catalogue') {
         setCurrentPage('catalogue')
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      } else if (hash === '#collections') {
+        setCurrentPage('collections')
         window.scrollTo({ top: 0, behavior: 'smooth' })
       } else {
         setCurrentPage('home')
@@ -36,6 +40,10 @@ function App() {
 
   if (currentPage === 'catalogue') {
     return <Catalogue />
+  }
+
+  if (currentPage === 'collections') {
+    return <Collections />
   }
 
   return <Home />
