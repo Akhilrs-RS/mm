@@ -30,7 +30,7 @@ const collectionsData = [
     title: "Traditional Collection",
     description: "Exquisite bridal jewellery sets that make your special day unforgettable. Premium kundan.",
     image: co3Img,
-    badge: "Festival special: 299 off"
+    badge: "Festival special 299 off"
   },
   {
     id: 4,
@@ -143,7 +143,7 @@ export default function Collections() {
       >
         <div className="absolute inset-0 bg-black/15 z-0 pointer-events-none"></div>
 
-        <div className="container mx-auto z-10 flex flex-col justify-center max-w-4xl text-center md:text-left">
+        <div className="container mx-auto z-10 flex flex-col justify-center items-center text-center max-w-4xl">
           <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold text-gray-900 leading-tight mb-4">
             Our Collections
           </h1>
@@ -163,7 +163,7 @@ export default function Collections() {
                 className="rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col"
               >
                 {/* Image Section */}
-                <div className="aspect-[4/3] w-full overflow-hidden">
+                <div className="aspect-square w-full overflow-hidden">
                   <img 
                     src={col.image} 
                     alt={col.title} 
@@ -172,37 +172,37 @@ export default function Collections() {
                 </div>
 
                 {/* Dark Bronze Content Section */}
-                <div className="bg-gradient-to-b from-[#352219] to-[#1a100b] text-white p-6 flex flex-col flex-grow items-start justify-between min-h-[180px]">
-                  <div>
-                    <h3 className="font-serif text-lg md:text-xl font-medium text-white mb-2">
-                      {col.title}
-                    </h3>
-                    <p className="text-gray-300 text-xs md:text-sm font-light font-sans leading-relaxed mb-4">
-                      {col.description}
-                    </p>
-                  </div>
+                <div className="bg-gradient-to-b from-[#8c624c] to-[#4c3222] text-white p-6 flex flex-col flex-grow items-start justify-start min-h-[220px]">
+                  <h3 className="font-serif text-lg md:text-xl font-medium text-white mb-2">
+                    {col.title}
+                  </h3>
+                  <p className="text-white/85 text-xs md:text-sm font-light font-sans leading-relaxed mb-4">
+                    {col.description}
+                  </p>
 
-                  <div className="w-full flex items-center justify-between mt-auto">
-                    {/* Red Pill Badge */}
-                    <span className="bg-[#e53e3e] text-white text-[10px] md:text-xs font-medium px-3 py-1 rounded-full uppercase tracking-wider">
+                  {/* Red Pill Badge */}
+                  <div className="mb-4">
+                    <span className="bg-[#e53e3e] text-white text-[10px] md:text-xs font-medium px-3.5 py-1.5 rounded-full uppercase tracking-wider">
                       {col.badge}
                     </span>
+                  </div>
 
-                    {/* View Collection Link */}
+                  {/* View Collection Link */}
+                  <div className="mt-auto">
                     <a 
                       href={`#collections/${col.id}`} 
                       className="inline-flex items-center text-white hover:text-gold-400 text-xs md:text-sm font-semibold transition-colors duration-300 group"
                     >
                       View Collection
                       <svg 
-                        className="w-3.5 h-3.5 ml-1 transform group-hover:translate-x-1 transition-transform duration-300" 
+                        className="w-4 h-4 ml-1.5 transform group-hover:translate-x-1.5 transition-transform duration-300" 
                         fill="none" 
                         stroke="currentColor" 
                         strokeWidth={2}
                         viewBox="0 0 24 24" 
                         xmlns="http://www.w3.org/2000/svg"
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                       </svg>
                     </a>
                   </div>
