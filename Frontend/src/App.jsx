@@ -9,10 +9,10 @@ function App() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash
-      if (hash === '#catalogue') {
+      if (hash.startsWith('#catalogue')) {
         setCurrentPage('catalogue')
         window.scrollTo({ top: 0, behavior: 'smooth' })
-      } else if (hash === '#collections') {
+      } else if (hash.startsWith('#collections')) {
         setCurrentPage('collections')
         window.scrollTo({ top: 0, behavior: 'smooth' })
       } else {

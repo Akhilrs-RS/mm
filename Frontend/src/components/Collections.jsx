@@ -68,14 +68,14 @@ export default function Collections() {
           <a href="#catalogue" className="text-white hover:text-gold-400 font-medium text-sm tracking-wide transition-colors duration-300">
             Catalogue
           </a>
-          <a href="/#offers" className="text-white hover:text-gold-400 font-medium text-sm tracking-wide transition-colors duration-300">
+          <a href="#offers" className="text-white hover:text-gold-400 font-medium text-sm tracking-wide transition-colors duration-300">
             Offers
           </a>
         </nav>
 
         {/* Center Logo */}
         <div className="flex flex-col items-center justify-center mx-auto md:mx-0">
-          <a href="/#" className="flex flex-col items-center justify-center">
+          <a href="#" className="flex flex-col items-center justify-center">
             <div className="relative flex items-center justify-center w-12 h-12 mb-1 rounded-full border border-gold-400/30 bg-gradient-to-b from-gold-500/10 to-transparent">
               {/* Elegant Monogram Monolith SVG */}
               <svg 
@@ -112,13 +112,13 @@ export default function Collections() {
 
         {/* Right Links */}
         <nav className="hidden md:flex items-center gap-8 lg:gap-12 flex-1 justify-start pl-8 lg:pl-16">
-          <a href="/#gallery" className="text-white hover:text-gold-400 font-medium text-sm tracking-wide transition-colors duration-300">
+          <a href="#gallery" className="text-white hover:text-gold-400 font-medium text-sm tracking-wide transition-colors duration-300">
             Gallery
           </a>
-          <a href="/#about" className="text-white hover:text-gold-400 font-medium text-sm tracking-wide transition-colors duration-300">
+          <a href="#about" className="text-white hover:text-gold-400 font-medium text-sm tracking-wide transition-colors duration-300">
             About
           </a>
-          <a href="/#contact" className="text-white hover:text-gold-400 font-medium text-sm tracking-wide transition-colors duration-300">
+          <a href="#contact" className="text-white hover:text-gold-400 font-medium text-sm tracking-wide transition-colors duration-300">
             Contact
           </a>
         </nav>
