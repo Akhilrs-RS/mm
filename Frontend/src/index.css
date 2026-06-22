@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-luxury-ivory text-luxury-onyx font-sans antialiased transition-colors duration-300;
+  }
+  
+  body.dark {
+    @apply bg-luxury-onyx text-luxury-ivory;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-cinzel tracking-wider;
+  }
+}
+
+@layer components {
+  .luxury-glass {
+    @apply backdrop-blur-md bg-white/70 border border-white/20 shadow-lg;
+  }
+
+  .dark .luxury-glass {
+    @apply backdrop-blur-md bg-luxury-onyx/80 border border-white/10 shadow-2xl;
+  }
+
+  .gold-gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-luxury-gold-dark via-luxury-gold to-luxury-gold-light;
+  }
+
+  .gold-gradient-button {
+    @apply bg-gradient-to-r from-luxury-gold-dark via-luxury-gold to-luxury-gold-light text-luxury-onyx hover:from-luxury-gold hover:to-luxury-gold-light transition-all duration-300 shadow-md hover:shadow-luxury-gold/20 font-medium;
+  }
+
+  .gold-border-hover {
+    @apply border border-transparent hover:border-luxury-gold/50 transition-all duration-300;
+  }
+}
+
+/* Custom Scrollbar for Luxury Feeling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f0efea;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #aa7c11;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d4af37;
+}
+
+/* Dynamic slider and customized elements */
+input[type="range"] {
+  accent-color: #d4af37;
+}
+
+.shimmer-effect {
+  background: linear-gradient(
+    90deg,
+    rgba(212, 175, 55, 0.1) 25%,
+    rgba(212, 175, 55, 0.3) 50%,
+    rgba(212, 175, 55, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2.5s infinite linear;
+}
