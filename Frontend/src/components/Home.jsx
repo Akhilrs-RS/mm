@@ -167,6 +167,9 @@ export default function Home() {
         </div>
       </main>
 
+      {/* Second Page Top Rose Bar */}
+      <div className="w-full h-8 bg-[#966363] shrink-0 z-10 relative"></div>
+
       {/* Features Bar */}
       <section className="bg-[#ede4da] text-[#2c221e] py-8 border-t border-[#dfd6cc] z-10 relative">
         <div className="container mx-auto px-6 md:px-16 lg:px-24">
@@ -651,6 +654,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Bottom Rose Bar */}
+      <div className="w-full h-12 bg-[#966363] shrink-0"></div>
     </div>
   );
 }
