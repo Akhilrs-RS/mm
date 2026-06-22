@@ -7,6 +7,7 @@ import ca3Img from '../assets/ca3.png';
 import ca4Img from '../assets/ca4.png';
 import ca5Img from '../assets/ca5.png';
 import ca6Img from '../assets/ca6.png';
+import Footer from './Footer';
 
 export default function Home() {
   return (
@@ -655,8 +656,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Bottom Rose Bar */}
-      <div className="w-full h-12 bg-[#966363] shrink-0"></div>
+      {/* Footer Section */}
+      <Footer />
     </div>
   );
 }
