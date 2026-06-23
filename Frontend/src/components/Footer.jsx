@@ -1,4 +1,6 @@
 
+import logImg from '../assets/log.png';
+
 export default function Footer() {
   return (
     <footer className="bg-black text-white border-t border-white/10 pt-16 pb-8 px-6 md:px-12 lg:px-24">
@@ -6,9 +8,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8 mb-12">
           {/* Column 1: Brand Info */}
           <div className="flex flex-col items-start gap-4">
-            <span className="font-serif text-lg tracking-[0.2em] text-gold-400 font-semibold uppercase">
-              MM Jewellery
-            </span>
+            <div className="flex flex-col items-start gap-1">
+              <img src={logImg} alt="MM Jewellery Logo" className="h-12 w-auto object-contain mb-1" />
+              <span className="font-serif text-sm tracking-[0.2em] text-gold-400 font-semibold">
+                MM Jewellery
+              </span>
+            </div>
             <p className="text-gray-400 text-sm leading-relaxed max-w-sm font-sans">
               Premium guarantee imitation jewellery for weddings, parties, festivals, and daily wear. Elegance made affordable.
             </p>
