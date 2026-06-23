@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react'
 import Home from './components/Home'
 import Catalogue from './components/Catalogue'
 import Collections from './components/Collections'
+import Offers from './components/Offers'
+import Gallery from './components/Gallery'
+import About from './components/About'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
@@ -14,6 +17,15 @@ function App() {
         window.scrollTo({ top: 0, behavior: 'smooth' })
       } else if (hash.startsWith('#collections')) {
         setCurrentPage('collections')
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      } else if (hash.startsWith('#offers')) {
+        setCurrentPage('offers')
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      } else if (hash.startsWith('#gallery')) {
+        setCurrentPage('gallery')
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      } else if (hash.startsWith('#about')) {
+        setCurrentPage('about')
         window.scrollTo({ top: 0, behavior: 'smooth' })
       } else {
         setCurrentPage('home')
@@ -44,6 +56,18 @@ function App() {
 
   if (currentPage === 'collections') {
     return <Collections />
+  }
+
+  if (currentPage === 'offers') {
+    return <Offers />
+  }
+
+  if (currentPage === 'gallery') {
+    return <Gallery />
+  }
+
+  if (currentPage === 'about') {
+    return <About />
   }
 
   return <Home />
