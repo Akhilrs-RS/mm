@@ -6,13 +6,38 @@ import Offers from './components/Offers'
 import Gallery from './components/Gallery'
 import About from './components/About'
 import Contact from './components/Contact'
+import AdminLogin from './components/AdminLogin'
+import AdminDashboard from './components/AdminDashboard'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(
+    localStorage.getItem('admin_is_logged_in') === 'true'
+  )
 
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash
+      const path = window.location.pathname
+
+      if (path === '/admin') {
+        // If there's a hash action, redirect to home page with that hash
+        if (hash && hash !== '#') {
+          window.location.href = '/' + hash
+          return
+        }
+        
+        const loggedIn = localStorage.getItem('admin_is_logged_in') === 'true'
+        setIsAdminLoggedIn(loggedIn)
+        if (loggedIn) {
+          setCurrentPage('admin-dashboard')
+        } else {
+          setCurrentPage('admin-login')
+        }
+        return
+      }
+
+      // Public site routing
       if (hash.startsWith('#catalogue')) {
         setCurrentPage('catalogue')
         window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -53,6 +78,26 @@ function App() {
       window.removeEventListener('hashchange', handleHashChange)
     }
   }, [])
+
+  const handleLoginSuccess = () => {
+    setIsAdminLoggedIn(true)
+    setCurrentPage('admin-dashboard')
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin_is_logged_in')
+    localStorage.removeItem('admin_username')
+    setIsAdminLoggedIn(false)
+    window.location.href = '/'
+  }
+
+  if (currentPage === 'admin-login') {
+    return <AdminLogin onLoginSuccess={handleLoginSuccess} />
+  }
+
+  if (currentPage === 'admin-dashboard') {
+    return <AdminDashboard onLogout={handleLogout} />
+  }
 
   if (currentPage === 'catalogue') {
     return <Catalogue />
