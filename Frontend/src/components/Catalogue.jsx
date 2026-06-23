@@ -18,8 +18,7 @@ import ca12Img from '../assets/ca12.png';
 import ca13Img from '../assets/ca13.png';
 import ca14Img from '../assets/ca14.png';
 
-// ca15.png does not exist in src/assets, so we set it to null
-const ca15Img = null;
+import ca15Img from '../assets/u.png';
 
 // Product Data
 const productsData = [

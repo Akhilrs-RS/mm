@@ -5,6 +5,7 @@ import Collections from './components/Collections'
 import Offers from './components/Offers'
 import Gallery from './components/Gallery'
 import About from './components/About'
+import Contact from './components/Contact'
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home')
@@ -26,6 +27,9 @@ function App() {
         window.scrollTo({ top: 0, behavior: 'smooth' })
       } else if (hash.startsWith('#about')) {
         setCurrentPage('about')
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      } else if (hash.startsWith('#contact')) {
+        setCurrentPage('contact')
         window.scrollTo({ top: 0, behavior: 'smooth' })
       } else {
         setCurrentPage('home')
@@ -68,6 +72,10 @@ function App() {
 
   if (currentPage === 'about') {
     return <About />
+  }
+
+  if (currentPage === 'contact') {
+    return <Contact />
   }
 
   return <Home />
