@@ -11,6 +11,14 @@ namespace Backend.Data
 
         public DbSet<AdminUser> AdminUsers { get; set; } = null!;
         public DbSet<AdminImage> AdminImages { get; set; } = null!;
+        public DbSet<Category> Categories { get; set; } = null!;
+        public DbSet<Collection> Collections { get; set; } = null!;
+        public DbSet<Product> Products { get; set; } = null!;
+        public DbSet<ProductImage> ProductImages { get; set; } = null!;
+        public DbSet<Offer> Offers { get; set; } = null!;
+        public DbSet<OfferProduct> OfferProducts { get; set; } = null!;
+        public DbSet<Banner> Banners { get; set; } = null!;
+        public DbSet<Inquiry> Inquiries { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

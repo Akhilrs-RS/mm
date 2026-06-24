@@ -45,30 +45,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Auto-verify and create database and tables on startup + seed default admin user
+// Auto-verify and create database and tables on startup + seed default data
 try
 {
     using (var scope = app.Services.CreateScope())
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        
-        // This will create the database and tables if they do not exist
-        dbContext.Database.EnsureCreated();
-        Console.WriteLine("MySQL database and tables initialized successfully.");
-
-        // Seed default administrator if table is empty
-        if (!dbContext.AdminUsers.Any())
-        {
-            var defaultAdmin = new AdminUser
-            {
-                Username = "admin",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
-                CreatedAt = DateTime.UtcNow
-            };
-            dbContext.AdminUsers.Add(defaultAdmin);
-            dbContext.SaveChanges();
-            Console.WriteLine("Database seeded: Default admin created successfully. (Username: admin, Password: admin123)");
-        }
+        DbInitializer.Seed(dbContext);
+        Console.WriteLine("MySQL database tables and seed data initialized successfully.");
     }
 }
 catch (Exception ex)

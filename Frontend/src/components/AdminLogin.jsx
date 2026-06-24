@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import logImg from '../assets/log.png';
 
 export default function AdminLogin({ onLoginSuccess }) {
   const [username, setUsername] = useState('');
@@ -51,11 +52,12 @@ export default function AdminLogin({ onLoginSuccess }) {
 
       <div className="w-full max-w-md relative z-10">
         {/* Brand Header */}
-        <div className="text-center mb-8">
-          <h1 className="font-serif text-3xl md:text-4xl text-white tracking-[0.2em] font-semibold uppercase mb-2">
-            MM <span className="text-gold-400 font-serif">Jewellers</span>
+        <div className="text-center mb-8 flex flex-col items-center justify-center">
+          <img src={logImg} alt="MM Jewellery Logo" className="h-14 w-auto object-contain mb-2" />
+          <h1 className="font-serif text-2xl md:text-3xl text-white tracking-[0.2em] font-semibold uppercase mb-1">
+            MM Jewellery
           </h1>
-          <p className="text-neutral-400 text-xs uppercase tracking-widest font-light">
+          <p className="text-neutral-450 text-[10px] uppercase tracking-[0.15em] font-light">
             Administration Portal
           </p>
         </div>

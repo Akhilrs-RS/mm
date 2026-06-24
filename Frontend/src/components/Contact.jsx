@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Footer from './Footer';
 import Nav from './Nav';
 
@@ -5,6 +6,44 @@ import Nav from './Nav';
 import contactHeroImg from '../assets/cii.png';
 
 export default function Contact() {
+  const [customerName, setCustomerName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusMsg, setStatusMsg] = useState({ success: false, text: '' });
+
+  const handleInquirySubmit = async (e) => {
+    e.preventDefault();
+    setStatusMsg({ success: false, text: '' });
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('http://localhost:5005/api/inquiries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ customerName, email, phone, message }),
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setStatusMsg({ success: true, text: 'Your inquiry has been submitted successfully. Our specialists will contact you shortly.' });
+        setCustomerName('');
+        setEmail('');
+        setPhone('');
+        setMessage('');
+      } else {
+        setStatusMsg({ success: false, text: data.message || 'Failed to submit inquiry.' });
+      }
+    } catch (err) {
+      console.error(err);
+      setStatusMsg({ success: false, text: 'Could not connect to the server. Please try again later.' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <div className="min-h-screen bg-white text-black flex flex-col font-sans select-none">
       {/* Navigation Header */}
@@ -146,6 +185,88 @@ export default function Contact() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Inquiry Form Section */}
+      <section className="bg-gray-50 py-20 px-6 md:px-12 lg:px-24 border-t border-gray-100">
+        <div className="container mx-auto max-w-3xl bg-white border border-gray-100 rounded-2xl p-8 md:p-12 shadow-sm">
+          <div className="text-center mb-10">
+            <span className="text-[#aa7c11] font-medium text-xs md:text-sm tracking-wider uppercase block mb-2 font-serif">
+              Inquiry Form
+            </span>
+            <h2 className="font-serif text-2xl md:text-3xl font-semibold text-gray-900 mb-3">
+              Send Us a Message
+            </h2>
+            <p className="text-gray-600 text-xs md:text-sm font-light max-w-lg mx-auto leading-relaxed">
+              Have questions about sizing, diamond grades, or customization? Send us an inquiry and our jewelry experts will assist you.
+            </p>
+          </div>
+
+          {statusMsg.text && (
+            <div className={`p-4 rounded-xl text-xs mb-6 ${statusMsg.success ? 'bg-emerald-50 text-emerald-800 border border-emerald-100' : 'bg-red-50 text-red-800 border border-red-100'}`}>
+              {statusMsg.text}
+            </div>
+          )}
+
+          <form onSubmit={handleInquirySubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="block text-xs uppercase tracking-wider text-gray-500 font-medium">Your Name</label>
+                <input
+                  type="text"
+                  required
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  placeholder="Enter your name"
+                  className="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#aa7c11] transition-colors"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="block text-xs uppercase tracking-wider text-gray-500 font-medium">Email Address</label>
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@example.com"
+                  className="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#aa7c11] transition-colors"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs uppercase tracking-wider text-gray-500 font-medium">Phone Number</label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="e.g. +91 98765 43210"
+                className="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#aa7c11] transition-colors"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs uppercase tracking-wider text-gray-500 font-medium">Your Inquiry Message</label>
+              <textarea
+                rows="4"
+                required
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Describe what you are looking for..."
+                className="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#aa7c11] transition-colors"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full py-3.5 bg-[#aa7c11] hover:bg-gold-500 text-white text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-300 shadow flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? 'Sending...' : 'Submit Inquiry'}
+            </button>
+          </form>
         </div>
       </section>
 
