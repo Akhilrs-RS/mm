@@ -19,7 +19,8 @@ export default function AdminLogin({ onLoginSuccess }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5005/api/admin/login', {
+      const apiHost = window.location.hostname;
+      const response = await fetch(`http://${apiHost}:5005/api/admin/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

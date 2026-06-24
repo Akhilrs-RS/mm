@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import logImg from '../assets/log.png';
 
+const apiHost = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+const BACKEND_URL = `http://${apiHost}:5005`;
+
 export default function AdminDashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState('overview');
   
@@ -104,7 +107,7 @@ export default function AdminDashboard({ onLogout }) {
   const apiFetch = async (endpoint, options = {}) => {
     setErrorMsg('');
     try {
-      const response = await fetch(`http://localhost:5005/api/${endpoint}`, options);
+      const response = await fetch(`${BACKEND_URL}/api/${endpoint}`, options);
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
         throw new Error(errData.message || `API error ${response.status}`);
@@ -181,7 +184,7 @@ export default function AdminDashboard({ onLogout }) {
 
     setIsUploading(true);
     try {
-      const response = await fetch('http://localhost:5005/api/admin/images', {
+      const response = await fetch(`${BACKEND_URL}/api/admin/images`, {
         method: 'POST',
         body: formData,
       });
@@ -231,7 +234,7 @@ export default function AdminDashboard({ onLogout }) {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:5005/api/admin/images/${imageId}`, {
+      const response = await fetch(`${BACKEND_URL}/api/admin/images/${imageId}`, {
         method: 'DELETE',
       });
       if (response.ok) {
@@ -535,7 +538,7 @@ export default function AdminDashboard({ onLogout }) {
     setIsUpdatingPassword(true);
 
     try {
-      const response = await fetch('http://localhost:5005/api/admin/change-password', {
+      const response = await fetch(`${BACKEND_URL}/api/admin/change-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -1034,7 +1037,7 @@ export default function AdminDashboard({ onLogout }) {
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {collections.map(col => {
                   const linkedImage = dbImages.find(img => img.id === col.imageId);
-                  const imageUrl = linkedImage ? `http://localhost:5005/api/admin/images/${col.imageId}` : null;
+                  const imageUrl = linkedImage ? `${BACKEND_URL}/api/admin/images/${col.imageId}` : null;
                   return (
                     <div key={col.id} className="bg-neutral-900 border border-white/5 rounded-2xl overflow-hidden flex flex-col justify-between group">
                       {/* Image header */}
@@ -1446,7 +1449,7 @@ export default function AdminDashboard({ onLogout }) {
                     <div className="flex flex-wrap gap-3 bg-black/40 border border-neutral-850 rounded-xl p-3">
                       {prodForm.imageIds.map(imgId => (
                         <div key={imgId} className="relative w-14 h-14 bg-neutral-950 rounded-lg border border-white/5 overflow-hidden group">
-                          <img src={`http://localhost:5005/api/admin/images/${imgId}`} alt="" className="w-full h-full object-cover" />
+                          <img src={`${BACKEND_URL}/api/admin/images/${imgId}`} alt="" className="w-full h-full object-cover" />
                           <button
                             type="button"
                             onClick={() => setProdForm(prev => ({
@@ -1627,7 +1630,7 @@ export default function AdminDashboard({ onLogout }) {
                       {colForm.imageId ? 'Change Image' : 'Select Image'}
                     </button>
                     {colForm.imageId && (
-                      <img src={`http://localhost:5005/api/admin/images/${colForm.imageId}`} alt="" className="w-10 h-10 object-cover rounded-lg border border-white/5" />
+                      <img src={`${BACKEND_URL}/api/admin/images/${colForm.imageId}`} alt="" className="w-10 h-10 object-cover rounded-lg border border-white/5" />
                     )}
                   </div>
                 </div>
@@ -1847,7 +1850,7 @@ export default function AdminDashboard({ onLogout }) {
                       {bannerForm.imageId ? 'Change Image' : 'Select Image'}
                     </button>
                     {bannerForm.imageId && (
-                      <img src={`http://localhost:5005/api/admin/images/${bannerForm.imageId}`} alt="" className="w-16 h-10 object-cover rounded-lg border border-white/5" />
+                      <img src={`${BACKEND_URL}/api/admin/images/${bannerForm.imageId}`} alt="" className="w-16 h-10 object-cover rounded-lg border border-white/5" />
                     )}
                   </div>
                 </div>
@@ -1929,7 +1932,7 @@ export default function AdminDashboard({ onLogout }) {
                           className="aspect-square bg-neutral-950 flex items-center justify-center overflow-hidden"
                         >
                           <img
-                            src={`http://localhost:5005/api/admin/images/${image.id}`}
+                            src={`${BACKEND_URL}/api/admin/images/${image.id}`}
                             alt=""
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           />
