@@ -173,11 +173,11 @@ export default function Contact() {
 
             {/* Right Column: Google Maps Iframe */}
             <div className="lg:col-span-7">
-              <div className="w-full h-full min-h-[400px] rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+              <div className="w-full h-full min-h-[300px] sm:min-h-[400px] rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
                 <iframe 
                   title="MM Jewellery Showroom Map"
                   src="https://maps.google.com/maps?q=Kalbadevi,%20Mumbai,%20India&t=&z=16&ie=UTF8&iwloc=&output=embed" 
-                  className="w-full h-full min-h-[400px] border-0"
+                  className="w-full h-full min-h-[300px] sm:min-h-[400px] border-0"
                   allowFullScreen="" 
                   loading="lazy" 
                   referrerPolicy="no-referrer-when-downgrade"
@@ -190,7 +190,7 @@ export default function Contact() {
 
       {/* Inquiry Form Section */}
       <section className="bg-gray-50 py-20 px-6 md:px-12 lg:px-24 border-t border-gray-100">
-        <div className="container mx-auto max-w-3xl bg-white border border-gray-100 rounded-2xl p-8 md:p-12 shadow-sm">
+        <div className="container mx-auto max-w-3xl bg-white border border-gray-100 rounded-2xl p-5 sm:p-8 md:p-12 shadow-sm">
           <div className="text-center mb-10">
             <span className="text-[#aa7c11] font-medium text-xs md:text-sm tracking-wider uppercase block mb-2 font-serif">
               Inquiry Form

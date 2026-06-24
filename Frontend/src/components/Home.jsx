@@ -48,9 +48,9 @@ export default function Home() {
             </span>
 
             {/* Main Header */}
-            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-medium text-white leading-tight mb-6">
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-medium text-white leading-tight mb-6">
               Shine Like <span className="text-gold-400 font-serif">Royalty,</span>
-              <br />
+              <br className="hidden sm:inline" />
               Without the Heavy Price.
             </h1>
 
@@ -170,7 +170,7 @@ export default function Home() {
       <section id="collections" className="bg-white text-black py-20 px-6 md:px-12 lg:px-24">
         <div className="container mx-auto">
           {/* Section Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-end mb-12 gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 gap-4">
             <div>
               <span className="text-[#aa7c11] font-medium text-sm md:text-base tracking-wider uppercase block mb-3 font-serif">
                 Curated Collections
@@ -201,7 +201,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   Collection
                 </span>
@@ -232,7 +232,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   Collection
                 </span>
@@ -263,7 +263,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   Collection
                 </span>
@@ -318,7 +318,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   BANGLES
                 </span>
@@ -375,7 +375,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   BANGLES
                 </span>
@@ -432,7 +432,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   BANGLES
                 </span>
@@ -483,7 +483,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   BANGLES
                 </span>
@@ -534,7 +534,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   EARNINGS
                 </span>
@@ -591,7 +591,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   BANGLES
                 </span>
@@ -640,7 +640,7 @@ export default function Home() {
       <section id="catalogue" className="bg-white text-black pb-24 px-6 md:px-12 lg:px-24">
         <div className="container mx-auto">
           {/* Section Header */}
-          <div className="flex flex-col sm:flex-row justify-between items-end mb-12 gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 gap-4">
             <div>
               <span className="font-serif italic text-gray-500 text-sm tracking-wide lowercase block mb-1">
                 latest pieces
@@ -674,7 +674,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   RINGS
                 </span>
@@ -725,7 +725,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   ANKLETS
                 </span>
@@ -776,7 +776,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   CHAINS
                 </span>
@@ -827,7 +827,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   BRIDAL SETS
                 </span>
@@ -878,7 +878,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   TRADITIONAL JEWELLERY
                 </span>
@@ -932,7 +932,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   NECKLACES
                 </span>
@@ -983,7 +983,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   EARRINGS
                 </span>
@@ -1034,7 +1034,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   PARTY WEAR JEWELLERY
                 </span>
@@ -1085,7 +1085,7 @@ export default function Home() {
                   className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                 />
               </div>
-              <div className="p-6 flex flex-col flex-grow text-left">
+              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
                 <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                   BANGLES
                 </span>
@@ -1134,7 +1134,7 @@ export default function Home() {
                 style={{ backgroundImage: `url(${e1Img})` }}
               />
               <div className="absolute inset-0 bg-black/50 transition-opacity duration-300 group-hover:bg-black/40" />
-              <div className="absolute inset-0 flex flex-col justify-end p-8 z-10 text-left">
+              <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8 z-10 text-left">
                 <span className="bg-red-600 text-white font-bold text-xs uppercase px-3 py-1.5 rounded tracking-wider w-max mb-4">
                   25% OFF
                 </span>
@@ -1154,13 +1154,13 @@ export default function Home() {
             {/* Right Stacked Offers */}
             <div className="flex flex-col gap-6">
               {/* Right Top Offer */}
-              <div className="relative overflow-hidden rounded-2xl h-[228px] group">
+              <div className="relative overflow-hidden rounded-2xl h-[200px] sm:h-[228px] group">
                 <div 
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
                   style={{ backgroundImage: `url(${e2Img})` }}
                 />
                 <div className="absolute inset-0 bg-black/55 transition-opacity duration-300 group-hover:bg-black/45" />
-                <div className="absolute inset-0 flex flex-col justify-end p-6 z-10 text-left">
+                <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 z-10 text-left">
                   <span className="bg-red-600 text-white font-bold text-[10px] uppercase px-2.5 py-1 rounded tracking-wider w-max mb-3">
                     20% OFF
                   </span>
@@ -1178,13 +1178,13 @@ export default function Home() {
               </div>
 
               {/* Right Bottom Offer */}
-              <div className="relative overflow-hidden rounded-2xl h-[228px] group">
+              <div className="relative overflow-hidden rounded-2xl h-[200px] sm:h-[228px] group">
                 <div 
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
                   style={{ backgroundImage: `url(${e3Img})` }}
                 />
                 <div className="absolute inset-0 bg-black/55 transition-opacity duration-300 group-hover:bg-black/45" />
-                <div className="absolute inset-0 flex flex-col justify-end p-6 z-10 text-left">
+                <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 z-10 text-left">
                   <span className="bg-red-600 text-white font-bold text-[10px] uppercase px-2.5 py-1 rounded tracking-wider w-max mb-3">
                     15% OFF
                   </span>

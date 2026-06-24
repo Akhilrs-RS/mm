@@ -220,7 +220,7 @@ export default function Catalogue() {
       {/* Filter and Search Bar Section */}
       <section className="bg-white py-10 px-6 md:px-12 lg:px-24 border-b border-gray-100">
         <div className="container mx-auto">
-          <div className="flex flex-col md:flex-row gap-4 justify-start items-center">
+          <div className="flex flex-col md:flex-row gap-4 justify-start items-stretch md:items-center">
             {/* Search Input */}
             <div className="relative w-full md:w-80">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -238,11 +238,11 @@ export default function Catalogue() {
             </div>
 
             {/* Dropdowns */}
-            <div className="flex flex-wrap gap-3 w-full md:w-auto">
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
               <select 
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-gold-500 focus:bg-white transition-colors"
+                className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-gold-500 focus:bg-white transition-colors"
               >
                 <option value="All">All Categories</option>
                 <option value="BANGLES">Bangles</option>
@@ -255,7 +255,7 @@ export default function Catalogue() {
                 <option value="Party Wear Jewellery">Party Wear</option>
               </select>
 
-              <select className="px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-gold-500 focus:bg-white transition-colors">
+              <select className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-gold-500 focus:bg-white transition-colors">
                 <option>All Collections</option>
                 <option>Bridal Collection</option>
                 <option>Wedding Collection</option>
@@ -263,7 +263,7 @@ export default function Catalogue() {
                 <option>Modern Collection</option>
               </select>
 
-              <select className="px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-gold-500 focus:bg-white transition-colors">
+              <select className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-gold-500 focus:bg-white transition-colors">
                 <option>Select</option>
                 <option>Price: Low to High</option>
                 <option>Price: High to Low</option>
@@ -282,7 +282,7 @@ export default function Catalogue() {
               <p className="text-gray-500 text-lg">No products found matching your search criteria.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
               {filteredProducts.map((product) => (
                 <div 
                   key={product.id} 
@@ -318,7 +318,7 @@ export default function Catalogue() {
                   </div>
 
                   {/* Content Area */}
-                  <div className="p-6 flex flex-col flex-grow">
+                  <div className="p-4 sm:p-6 flex flex-col flex-grow">
                     <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
                       {product.category}
                     </span>

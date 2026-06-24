@@ -5,7 +5,7 @@ export default function Nav() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <header className="w-full bg-black text-white border-b border-white/5 py-4 px-6 md:px-12 flex items-center justify-between sticky top-0 z-50">
+    <header className="w-full bg-black text-white border-b border-white/5 py-4 px-6 md:px-12 flex items-center justify-between relative sticky top-0 z-50">
       {/* Left Links */}
       <nav className="hidden md:flex items-center gap-8 lg:gap-12 flex-1 justify-end pr-8 lg:pr-16">
         <a href="#collections" className="text-white hover:text-gold-400 font-medium text-sm tracking-wide transition-colors duration-300">
@@ -20,7 +20,7 @@ export default function Nav() {
       </nav>
 
       {/* Center Logo */}
-      <div className="flex items-center justify-center mx-auto md:mx-0">
+      <div className="absolute left-1/2 -translate-x-1/2 md:relative md:left-0 md:translate-x-0 flex items-center justify-center">
         <a href="#" className="flex flex-col items-center justify-center">
           <img src={logImg} alt="MM Jewellery Logo" className="h-10 w-auto object-contain mb-1" />
           <span className="font-serif text-sm tracking-[0.2em] text-gold-400 font-semibold whitespace-nowrap">
