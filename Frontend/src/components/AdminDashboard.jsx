@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import logImg from '../assets/log.png';
 
 export default function AdminDashboard({ onLogout }) {
   const [activeTab, setActiveTab] = useState('overview');
@@ -618,11 +619,14 @@ export default function AdminDashboard({ onLogout }) {
 
       {/* Admin Header */}
       <header className="w-full bg-black border-b border-white/5 py-4 px-6 md:px-12 flex items-center justify-between sticky top-0 z-40">
-        <div className="flex items-center gap-4">
-          <span className="font-serif text-lg tracking-[0.2em] text-gold-400 font-semibold uppercase">
-            MM Jewellery
-          </span>
-          <span className="h-5 w-[1px] bg-neutral-800 hidden sm:inline"></span>
+        <div className="flex items-center gap-3">
+          <div className="flex flex-col items-center justify-center gap-0.5">
+            <img src={logImg} alt="MM Jewellery Logo" className="h-9 w-auto object-contain" />
+            <span className="font-serif text-[10px] tracking-[0.2em] text-gold-400 font-semibold uppercase whitespace-nowrap leading-none">
+              MM Jewellery
+            </span>
+          </div>
+          <span className="h-6 w-[1px] bg-neutral-800 hidden sm:inline ml-1"></span>
           <span className="text-xs uppercase tracking-widest text-neutral-400 font-light hidden sm:inline">
             Admin Panel
           </span>

@@ -53,11 +53,11 @@ export default function AdminLogin({ onLoginSuccess }) {
       <div className="w-full max-w-md relative z-10">
         {/* Brand Header */}
         <div className="text-center mb-8 flex flex-col items-center justify-center">
-          <img src={logImg} alt="MM Jewellery Logo" className="h-14 w-auto object-contain mb-2" />
-          <h1 className="font-serif text-2xl md:text-3xl text-white tracking-[0.2em] font-semibold uppercase mb-1">
+          <img src={logImg} alt="MM Jewellery Logo" className="h-10 w-auto object-contain mb-1" />
+          <span className="font-serif text-sm tracking-[0.2em] text-gold-400 font-semibold whitespace-nowrap">
             MM Jewellery
-          </h1>
-          <p className="text-neutral-450 text-[10px] uppercase tracking-[0.15em] font-light">
+          </span>
+          <p className="text-neutral-450 text-[10px] uppercase tracking-[0.15em] font-light mt-1">
             Administration Portal
           </p>
         </div>

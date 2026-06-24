@@ -8,9 +8,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8 mb-12">
           {/* Column 1: Brand Info */}
           <div className="flex flex-col items-start gap-4">
-            <div className="flex flex-col items-start gap-1">
-              <img src={logImg} alt="MM Jewellery Logo" className="h-12 w-auto object-contain mb-1" />
-              <span className="font-serif text-sm tracking-[0.2em] text-gold-400 font-semibold">
+            <div className="flex flex-col items-center justify-center gap-1 self-start">
+              <img src={logImg} alt="MM Jewellery Logo" className="h-10 w-auto object-contain mb-1" />
+              <span className="font-serif text-sm tracking-[0.2em] text-gold-400 font-semibold whitespace-nowrap">
                 MM Jewellery
               </span>
             </div>
