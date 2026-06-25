@@ -18,6 +18,15 @@ namespace Backend.Models
         [MaxLength(255)]
         public string PasswordHash { get; set; } = string.Empty;
 
+        [Required]
+        [MaxLength(255)]
+        public string Email { get; set; } = string.Empty;
+
+        [MaxLength(10)]
+        public string? ResetCode { get; set; }
+
+        public DateTime? ResetCodeExpiry { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

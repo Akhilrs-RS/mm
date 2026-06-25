@@ -28,6 +28,7 @@ namespace Backend.Data
                 context.AdminUsers.Add(new AdminUser
                 {
                     Username = "admin",
+                    Email = "heyob93432@noproposal.com",
                     PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
                     CreatedAt = DateTime.UtcNow
                 });
