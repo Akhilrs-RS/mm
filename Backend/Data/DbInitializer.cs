@@ -38,6 +38,11 @@ namespace Backend.Data
             // 3. Seed Images if empty
             if (!context.AdminImages.Any())
             {
+                byte[] e1Bytes = File.Exists("../Frontend/src/assets/e1.png") ? File.ReadAllBytes("../Frontend/src/assets/e1.png") : dummyImageBytes;
+                byte[] e2Bytes = File.Exists("../Frontend/src/assets/e2.png") ? File.ReadAllBytes("../Frontend/src/assets/e2.png") : dummyImageBytes;
+                byte[] e3Bytes = File.Exists("../Frontend/src/assets/e3.png") ? File.ReadAllBytes("../Frontend/src/assets/e3.png") : dummyImageBytes;
+                byte[] h1Bytes = File.Exists("../Frontend/src/assets/h1.png") ? File.ReadAllBytes("../Frontend/src/assets/h1.png") : dummyImageBytes;
+
                 string[] imageNames = { "ring_preview.png", "necklace_preview.png", "earring_preview.png", "bangle_preview.png", "anklet_preview.png", "banner1.png", "banner2.png" };
                 foreach (var name in imageNames)
                 {
@@ -49,6 +54,42 @@ namespace Backend.Data
                         UploadedAt = DateTime.UtcNow
                     });
                 }
+                
+                context.AdminImages.Add(new AdminImage { Name = "e1.png", ContentType = "image/png", ImageData = e1Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "e2.png", ContentType = "image/png", ImageData = e2Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "e3.png", ContentType = "image/png", ImageData = e3Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "h1.png", ContentType = "image/png", ImageData = h1Bytes, UploadedAt = DateTime.UtcNow });
+
+                byte[] co1Bytes = File.Exists("../Frontend/src/assets/co1.png") ? File.ReadAllBytes("../Frontend/src/assets/co1.png") : dummyImageBytes;
+                byte[] co2Bytes = File.Exists("../Frontend/src/assets/co2.png") ? File.ReadAllBytes("../Frontend/src/assets/co2.png") : dummyImageBytes;
+                byte[] co3Bytes = File.Exists("../Frontend/src/assets/co3.png") ? File.ReadAllBytes("../Frontend/src/assets/co3.png") : dummyImageBytes;
+                byte[] co4Bytes = File.Exists("../Frontend/src/assets/co4.png") ? File.ReadAllBytes("../Frontend/src/assets/co4.png") : dummyImageBytes;
+                byte[] co5Bytes = File.Exists("../Frontend/src/assets/co5.png") ? File.ReadAllBytes("../Frontend/src/assets/co5.png") : dummyImageBytes;
+                byte[] co6Bytes = File.Exists("../Frontend/src/assets/co6.png") ? File.ReadAllBytes("../Frontend/src/assets/co6.png") : dummyImageBytes;
+
+                context.AdminImages.Add(new AdminImage { Name = "co1.png", ContentType = "image/png", ImageData = co1Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "co2.png", ContentType = "image/png", ImageData = co2Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "co3.png", ContentType = "image/png", ImageData = co3Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "co4.png", ContentType = "image/png", ImageData = co4Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "co5.png", ContentType = "image/png", ImageData = co5Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "co6.png", ContentType = "image/png", ImageData = co6Bytes, UploadedAt = DateTime.UtcNow });
+
+                byte[] ca1Bytes = File.Exists("../Frontend/src/assets/ca1.png") ? File.ReadAllBytes("../Frontend/src/assets/ca1.png") : dummyImageBytes;
+                byte[] ca2Bytes = File.Exists("../Frontend/src/assets/ca2.jpg") ? File.ReadAllBytes("../Frontend/src/assets/ca2.jpg") : dummyImageBytes;
+                byte[] ca3Bytes = File.Exists("../Frontend/src/assets/ca3.png") ? File.ReadAllBytes("../Frontend/src/assets/ca3.png") : dummyImageBytes;
+                byte[] ca4Bytes = File.Exists("../Frontend/src/assets/ca4.png") ? File.ReadAllBytes("../Frontend/src/assets/ca4.png") : dummyImageBytes;
+                byte[] ca5Bytes = File.Exists("../Frontend/src/assets/ca5.png") ? File.ReadAllBytes("../Frontend/src/assets/ca5.png") : dummyImageBytes;
+                byte[] ca6Bytes = File.Exists("../Frontend/src/assets/ca6.png") ? File.ReadAllBytes("../Frontend/src/assets/ca6.png") : dummyImageBytes;
+                byte[] ca7Bytes = File.Exists("../Frontend/src/assets/ca7.png") ? File.ReadAllBytes("../Frontend/src/assets/ca7.png") : dummyImageBytes;
+
+                context.AdminImages.Add(new AdminImage { Name = "ca1.png", ContentType = "image/png", ImageData = ca1Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "ca2.jpg", ContentType = "image/jpeg", ImageData = ca2Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "ca3.png", ContentType = "image/png", ImageData = ca3Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "ca4.png", ContentType = "image/png", ImageData = ca4Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "ca5.png", ContentType = "image/png", ImageData = ca5Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "ca6.png", ContentType = "image/png", ImageData = ca6Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "ca7.png", ContentType = "image/png", ImageData = ca7Bytes, UploadedAt = DateTime.UtcNow });
+
                 context.SaveChanges();
             }
 
@@ -61,6 +102,23 @@ namespace Backend.Data
             int ankletImageId = imageIds.ElementAtOrDefault(4);
             int banner1ImageId = imageIds.ElementAtOrDefault(5);
             int banner2ImageId = imageIds.ElementAtOrDefault(6);
+            int e1Id = imageIds.ElementAtOrDefault(7);
+            int e2Id = imageIds.ElementAtOrDefault(8);
+            int e3Id = imageIds.ElementAtOrDefault(9);
+            int h1Id = imageIds.ElementAtOrDefault(10);
+            int co1Id = imageIds.ElementAtOrDefault(11);
+            int co2Id = imageIds.ElementAtOrDefault(12);
+            int co3Id = imageIds.ElementAtOrDefault(13);
+            int co4Id = imageIds.ElementAtOrDefault(14);
+            int co5Id = imageIds.ElementAtOrDefault(15);
+            int co6Id = imageIds.ElementAtOrDefault(16);
+            int ca1Id = imageIds.ElementAtOrDefault(17);
+            int ca2Id = imageIds.ElementAtOrDefault(18);
+            int ca3Id = imageIds.ElementAtOrDefault(19);
+            int ca4Id = imageIds.ElementAtOrDefault(20);
+            int ca5Id = imageIds.ElementAtOrDefault(21);
+            int ca6Id = imageIds.ElementAtOrDefault(22);
+            int ca7Id = imageIds.ElementAtOrDefault(23);
 
             // 4. Seed Categories if empty
             if (!context.Categories.Any())
@@ -81,9 +139,12 @@ namespace Backend.Data
             if (!context.Collections.Any())
             {
                 context.Collections.AddRange(
-                    new Collection { Name = "Bridal Collection", Description = "Exquisite bridal jewelry sets for your special day.", ImageId = necklaceImageId, Badge = "Up to 25% off" },
-                    new Collection { Name = "Wedding Collection", Description = "Fine traditional gold ornaments for wedding guests.", ImageId = bangleImageId, Badge = "New Season" },
-                    new Collection { Name = "Festival Collection", Description = "Celebrate festive occasions with sparkling designs.", ImageId = ringImageId, Badge = "Special Edition" }
+                    new Collection { Name = "Bridal Collection", Description = "Exquisite bridal jewellery sets that make your special day unforgettable. Premium kundan", ImageId = co1Id, Badge = "Up to 25% off" },
+                    new Collection { Name = "Wedding Collection", Description = "Exquisite bridal jewellery sets that make your special day unforgettable. Premium kundan", ImageId = co2Id, Badge = "Flat ₹ 500" },
+                    new Collection { Name = "Traditional Collection", Description = "Exquisite bridal jewellery sets that make your special day unforgettable. Premium kundan", ImageId = co3Id, Badge = "Festival special 20% off" },
+                    new Collection { Name = "Modern Collection", Description = "Exquisite bridal jewellery sets that make your special day unforgettable. Premium kundan", ImageId = co4Id, Badge = "Up to 25% off" },
+                    new Collection { Name = "Party Wear Collection", Description = "Exquisite bridal jewellery sets that make your special day unforgettable. Premium kundan", ImageId = co5Id, Badge = "Up to 25% off" },
+                    new Collection { Name = "Festival Collections", Description = "Exquisite bridal jewellery sets that make your special day unforgettable. Premium kundan", ImageId = co6Id, Badge = "Up to 25% off" }
                 );
                 context.SaveChanges();
             }
@@ -94,7 +155,7 @@ namespace Backend.Data
             if (!context.Products.Any())
             {
                 // Rings
-                var ring1 = new Product { Name = "Classic Solitaire Gold Ring", Description = "A classic gold band topped with a brilliant diamond cut.", Price = 1200, Discount = 10, CategoryId = categories["Rings"], CollectionId = collections["Festival Collection"], IsFeatured = true, IsNewArrival = false, CustomBadge = "Hot Deal", ViewsCount = 450, CreatedAt = DateTime.UtcNow.AddDays(-15) };
+                var ring1 = new Product { Name = "Classic Solitaire Gold Ring", Description = "A classic gold band topped with a brilliant diamond cut.", Price = 1200, Discount = 10, CategoryId = categories["Rings"], CollectionId = collections["Festival Collections"], IsFeatured = true, IsNewArrival = false, CustomBadge = "Hot Deal", ViewsCount = 450, CreatedAt = DateTime.UtcNow.AddDays(-15) };
                 var ring2 = new Product { Name = "Royal Emerald Statement Ring", Description = "An ornate gold band featuring a large central emerald.", Price = 1800, Discount = 0, CategoryId = categories["Rings"], CollectionId = collections["Bridal Collection"], IsFeatured = true, IsNewArrival = true, CustomBadge = "Featured", ViewsCount = 380, CreatedAt = DateTime.UtcNow.AddDays(-10) };
                 
                 // Necklaces
@@ -108,7 +169,7 @@ namespace Backend.Data
                 var bang1 = new Product { Name = "Meenakari Gold Tone Bangle Set", Description = "Beautiful meenakari detailing on pure gold plating.", Price = 1500, Discount = 25, CategoryId = categories["Bangles"], CollectionId = collections["Bridal Collection"], IsFeatured = true, IsNewArrival = false, CustomBadge = "Hot Deal", ViewsCount = 680, CreatedAt = DateTime.UtcNow.AddDays(-12) };
  
                 // Anklets
-                var ank1 = new Product { Name = "Silver Plated Designer Anklet Set", Description = "Dainty ghungroo beads on sterling silver plated chains.", Price = 750, Discount = 0, CategoryId = categories["Anklets"], CollectionId = collections["Festival Collection"], IsFeatured = false, IsNewArrival = true, CustomBadge = "Best Seller", ViewsCount = 120, CreatedAt = DateTime.UtcNow.AddDays(-2) };
+                var ank1 = new Product { Name = "Silver Plated Designer Anklet Set", Description = "Dainty ghungroo beads on sterling silver plated chains.", Price = 750, Discount = 0, CategoryId = categories["Anklets"], CollectionId = collections["Festival Collections"], IsFeatured = false, IsNewArrival = true, CustomBadge = "Best Seller", ViewsCount = 120, CreatedAt = DateTime.UtcNow.AddDays(-2) };
 
                 context.Products.AddRange(ring1, ring2, neck1, neck2, ear1, bang1, ank1);
                 context.SaveChanges();
@@ -153,8 +214,10 @@ namespace Backend.Data
             if (!context.Banners.Any())
             {
                 context.Banners.AddRange(
-                    new Banner { Name = "Luxury Collection Showcase", ImageId = banner1ImageId, BannerType = "Homepage Banner", LinkUrl = "#collections", CreatedAt = DateTime.UtcNow },
-                    new Banner { Name = "Bridal Extravaganza Promo", ImageId = banner2ImageId, BannerType = "Promotional Banner", LinkUrl = "#offers", CreatedAt = DateTime.UtcNow }
+                    new Banner { Name = "Guarantee Imitation Jewellery|Shine Like |Royalty,|Without the Heavy Price.|Premium imitation jewellery crafted with precision — necklaces, bridal sets, bangles and earrings, designed to elevate every occasion.|6 Month Guarantee|6 Premium Polish", ImageId = h1Id, BannerType = "Homepage Banner", LinkUrl = "#collections", CreatedAt = DateTime.UtcNow },
+                    new Banner { Name = "25% OFF|Bridal Season Sale", ImageId = e1Id, BannerType = "Promotional Banner", LinkUrl = "#offers", CreatedAt = DateTime.UtcNow },
+                    new Banner { Name = "20% OFF|Festive Diwali Offer", ImageId = e2Id, BannerType = "Promotional Banner", LinkUrl = "#offers", CreatedAt = DateTime.UtcNow },
+                    new Banner { Name = "15% OFF|Nwe Arrival Flash Sal", ImageId = e3Id, BannerType = "Promotional Banner", LinkUrl = "#offers", CreatedAt = DateTime.UtcNow }
                 );
                 context.SaveChanges();
             }
@@ -174,15 +237,13 @@ namespace Backend.Data
             if (!context.GalleryItems.Any())
             {
                 context.GalleryItems.AddRange(
-                    new GalleryItem { Title = "Temple Design Gold Tone Necklace", Category = "JEWELLERY", ImageId = necklaceImageId },
-                    new GalleryItem { Title = "Anklet Set", Category = "COLLECTIONS", ImageId = ankletImageId },
-                    new GalleryItem { Title = "Traditional Jhumka Earrings", Category = "JEWELLERY", ImageId = earringImageId },
-                    new GalleryItem { Title = "Elegant Crystal Pendant Chain", Category = "COLLECTIONS", ImageId = necklaceImageId },
-                    new GalleryItem { Title = "Royal Polki Bridal Complete Set", Category = "JEWELLERY", ImageId = necklaceImageId },
-                    new GalleryItem { Title = "Temple Gold covering Necklace Set", Category = "COLLECTIONS", ImageId = necklaceImageId },
-                    new GalleryItem { Title = "Kundan Statement Ring Set", Category = "JEWELLERY", ImageId = ringImageId },
-                    new GalleryItem { Title = "Bridal Set", Category = "STORE", ImageId = necklaceImageId },
-                    new GalleryItem { Title = "Palakka Choker", Category = "EVENTS", ImageId = bangleImageId }
+                    new GalleryItem { Title = "Temple Design Gold Tone Necklace", Category = "JEWELLERY", ImageId = ca1Id },
+                    new GalleryItem { Title = "Anklet Set", Category = "COLLECTIONS", ImageId = ca2Id },
+                    new GalleryItem { Title = "Traditional Jhumka Earrings", Category = "STORE", ImageId = ca3Id },
+                    new GalleryItem { Title = "Elegant Crystal Pendant Chain", Category = "EVENTS", ImageId = ca4Id },
+                    new GalleryItem { Title = "Royal Polki Bridal Complete Set", Category = "JEWELLERY", ImageId = ca5Id },
+                    new GalleryItem { Title = "Temple Gold covering Necklace Set", Category = "COLLECTIONS", ImageId = ca6Id },
+                    new GalleryItem { Title = "Kundan Statement Ring Set", Category = "STORE", ImageId = ca7Id }
                 );
                 context.SaveChanges();
             }

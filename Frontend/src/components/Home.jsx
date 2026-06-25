@@ -90,95 +90,126 @@ export default function Home() {
       <Nav />
 
       {/* Hero Section */}
-      <main 
-        className="flex-grow w-full relative bg-cover bg-center flex items-center min-h-[calc(100vh-84px)]"
-        style={
-          banners.find(b => b.bannerType === 'Homepage Banner')
-            ? { backgroundImage: `url(${banners.find(b => b.bannerType === 'Homepage Banner').imageUrl})` }
-            : { background: 'linear-gradient(135deg, #120e0a 0%, #1a1510 50%, #0a0806 100%)' }
+      {(() => {
+        const homepageBanner = banners.find(b => b.bannerType === 'Homepage Banner');
+        let subtitle = "Guarantee Imitation Jewellery";
+        let title1 = "Shine Like ";
+        let titleGold = "Royalty,";
+        let title2 = "Without the Heavy Price.";
+        let description = "Premium imitation jewellery crafted with precision — necklaces, bridal sets, bangles and earrings, designed to elevate every occasion.";
+        let badge1 = "6 Month Guarantee";
+        let badge2 = "6 Premium Polish";
+
+        if (homepageBanner) {
+          if (homepageBanner.name.includes('|')) {
+            const parts = homepageBanner.name.split('|');
+            subtitle = parts[0] || subtitle;
+            title1 = parts[1] || "";
+            titleGold = parts[2] || "";
+            title2 = parts[3] || "";
+            description = parts[4] || description;
+            badge1 = parts[5] || badge1;
+            badge2 = parts[6] || badge2;
+          } else {
+            title1 = homepageBanner.name;
+            titleGold = "";
+            title2 = "";
+          }
         }
-      >
-        {/* Subtle Dark Overlay to balance visibility */}
-        <div className="absolute inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
-        {/* Content Container */}
-        <div className="container mx-auto px-6 md:px-16 lg:px-24 py-16 md:py-24 z-10 flex flex-col justify-between h-full relative">
-          <div className="max-w-2xl mt-8">
-            {/* Top Subtitle */}
-            <span className="text-gray-300 font-sans tracking-[0.25em] text-xs md:text-sm uppercase font-semibold mb-5 block">
-              Guarantee Imitation Jewellery
-            </span>
+        return (
+          <main 
+            className="flex-grow w-full relative bg-cover bg-center flex items-center min-h-[calc(100vh-84px)]"
+            style={
+              homepageBanner
+                ? { backgroundImage: `url(${homepageBanner.imageUrl})` }
+                : { background: 'linear-gradient(135deg, #120e0a 0%, #1a1510 50%, #0a0806 100%)' }
+            }
+          >
+            {/* Subtle Dark Overlay to balance visibility */}
+            <div className="absolute inset-0 bg-black/40 z-0 pointer-events-none"></div>
 
-            {/* Main Header */}
-            <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-medium text-white leading-tight mb-6">
-              {banners.find(b => b.bannerType === 'Homepage Banner') ? (
-                banners.find(b => b.bannerType === 'Homepage Banner').name
-              ) : (
-                <>
-                  Shine Like <span className="text-gold-400 font-serif">Royalty,</span>
-                  <br className="hidden sm:inline" />
-                  Without the Heavy Price.
-                </>
-              )}
-            </h1>
+            {/* Content Container */}
+            <div className="container mx-auto px-6 md:px-16 lg:px-24 py-16 md:py-24 z-10 flex flex-col justify-between h-full relative">
+              <div className="max-w-2xl mt-8">
+                {/* Top Subtitle */}
+                <span className="text-gray-300 font-sans tracking-[0.25em] text-xs md:text-sm uppercase font-semibold mb-5 block">
+                  {subtitle}
+                </span>
 
-            {/* Description */}
-            <p className="text-gray-300/90 text-sm sm:text-base md:text-lg max-w-xl mb-10 leading-relaxed font-light font-sans">
-              Premium imitation jewellery crafted with precision – necklaces, bridal sets, bangles and earrings, designed to elevate every occasion.
-            </p>
+                {/* Main Header */}
+                <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-medium text-white leading-tight mb-6">
+                  {title1}
+                  {titleGold && (
+                    <span className="text-gold-400 font-serif">{titleGold}</span>
+                  )}
+                  {title2 && (
+                    <>
+                      <br className="hidden sm:inline" />
+                      {title2}
+                    </>
+                  )}
+                </h1>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-16">
-              {/* Explore Collection Button */}
-              <a 
-                href={banners.find(b => b.bannerType === 'Homepage Banner')?.linkUrl || "#collections"} 
-                className="inline-flex items-center justify-center bg-white text-black font-semibold px-8 py-3.5 rounded-lg hover:bg-gold-400 hover:text-black transition-all duration-300 shadow-xl group text-sm md:text-base"
-              >
-                Explore Collection
-                <svg 
-                  className="w-4 h-4 ml-2 transform group-hover:translate-x-1.5 transition-transform duration-300" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24" 
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </a>
+                {/* Description */}
+                <p className="text-gray-300/90 text-sm sm:text-base md:text-lg max-w-xl mb-10 leading-relaxed font-light font-sans">
+                  {description}
+                </p>
 
-              {/* WhatsApp Enquiry Button */}
-              <a 
-                href="https://wa.me/919999999999" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center border border-gold-400/50 bg-black/40 hover:bg-gold-400/10 text-white font-medium px-8 py-3.5 rounded-lg transition-all duration-300 backdrop-blur-sm text-sm md:text-base"
-              >
-                {/* Custom WhatsApp SVG Icon */}
-                <svg 
-                  className="w-5 h-5 mr-2 text-[#25D366] fill-current" 
-                  viewBox="0 0 24 24" 
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M12.031 2c-5.514 0-9.989 4.478-9.989 9.99 0 1.763.459 3.483 1.332 5.006L2 22l5.143-1.348c1.477.807 3.136 1.233 4.884 1.233 5.514 0 9.99-4.478 9.99-9.99 0-5.514-4.476-9.99-9.988-9.99zm5.736 14.281c-.246.693-1.427 1.353-1.954 1.412-.477.053-.93.245-3.031-.628-2.656-1.104-4.331-3.79-4.464-3.967-.132-.177-1.081-1.441-1.081-2.75 0-1.309.68-1.954.921-2.217.241-.263.528-.329.704-.329.176 0 .352.001.505.009.158.007.371-.059.581.451.216.528.739 1.804.805 1.936.066.132.11.286.022.462-.088.176-.132.286-.264.44-.132.154-.277.344-.396.462-.132.132-.271.277-.116.544.154.264.685 1.134 1.472 1.835.986.88 1.815 1.155 2.079 1.287.264.132.418.11.572-.066.154-.176.66-.77.836-1.034.176-.264.352-.22.594-.132.241.088 1.54.726 1.804.858.264.132.44.198.505.308.067.11.067.638-.179 1.331z"/>
-                </svg>
-                WhatsApp Enquiry
-              </a>
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-4 mb-16">
+                  {/* Explore Collection Button */}
+                  <a 
+                    href={homepageBanner?.linkUrl || "#collections"} 
+                    className="inline-flex items-center justify-center bg-white text-black font-semibold px-8 py-3.5 rounded-lg hover:bg-gold-400 hover:text-black transition-all duration-300 shadow-xl group text-sm md:text-base"
+                  >
+                    Explore Collection
+                    <svg 
+                      className="w-4 h-4 ml-2 transform group-hover:translate-x-1.5 transition-transform duration-300" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24" 
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </a>
+
+                  {/* WhatsApp Enquiry Button */}
+                  <a 
+                    href="https://wa.me/919999999999" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center border border-gold-400/50 bg-black/40 hover:bg-gold-400/10 text-white font-medium px-8 py-3.5 rounded-lg transition-all duration-300 backdrop-blur-sm text-sm md:text-base"
+                  >
+                    {/* Custom WhatsApp SVG Icon */}
+                    <svg 
+                      className="w-5 h-5 mr-2 text-[#25D366] fill-current" 
+                      viewBox="0 0 24 24" 
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M12.031 2c-5.514 0-9.989 4.478-9.989 9.99 0 1.763.459 3.483 1.332 5.006L2 22l5.143-1.348c1.477.807 3.136 1.233 4.884 1.233 5.514 0 9.99-4.478 9.99-9.99 0-5.514-4.476-9.99-9.988-9.99zm5.736 14.281c-.246.693-1.427 1.353-1.954 1.412-.477.053-.93.245-3.031-.628-2.656-1.104-4.331-3.79-4.464-3.967-.132-.177-1.081-1.441-1.081-2.75 0-1.309.68-1.954.921-2.217.241-.263.528-.329.704-.329.176 0 .352.001.505.009.158.007.371-.059.581.451.216.528.739 1.804.805 1.936.066.132.11.286.022.462-.088.176-.132.286-.264.44-.132.154-.277.344-.396.462-.132.132-.271.277-.116.544.154.264.685 1.134 1.472 1.835.986.88 1.815 1.155 2.079 1.287.264.132.418.11.572-.066.154-.176.66-.77.836-1.034.176-.264.352-.22.594-.132.241.088 1.54.726 1.804.858.264.132.44.198.505.308.067.11.067.638-.179 1.331z"/>
+                    </svg>
+                    WhatsApp Enquiry
+                  </a>
+                </div>
+              </div>
+
+              {/* Bottom Badges */}
+              <div className="flex flex-wrap gap-x-8 gap-y-2 mt-auto text-sm tracking-[0.15em] text-white/90">
+                <div className="flex items-center gap-2">
+                  <span className="text-gold-400 font-bold text-lg">★</span>
+                  <span className="uppercase font-medium">{badge1}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-gold-400 font-bold text-lg">★</span>
+                  <span className="uppercase font-medium">{badge2}</span>
+                </div>
+              </div>
             </div>
-          </div>
-
-          {/* Bottom Badges */}
-          <div className="flex flex-wrap gap-x-8 gap-y-2 mt-auto text-sm tracking-[0.15em] text-white/90">
-            <div className="flex items-center gap-2">
-              <span className="text-gold-400 font-bold text-lg">★</span>
-              <span className="uppercase font-medium">6 Month Guarantee</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-gold-400 font-bold text-lg">★</span>
-              <span className="uppercase font-medium">6 Premium Polish</span>
-            </div>
-          </div>
-        </div>
-      </main>
+          </main>
+        );
+      })()}
 
       {/* Second Page Top Rose Bar */}
       <div className="w-full h-8 bg-[#966363] shrink-0 z-10 relative"></div>
@@ -548,37 +579,77 @@ export default function Home() {
           </div>
 
           {/* Banner Offers grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-            {banners.filter(b => b.bannerType !== "Homepage Banner").map(banner => (
-              <div key={banner.id} className="relative overflow-hidden rounded-2xl h-[240px] group">
-                <div 
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                  style={{ backgroundImage: `url(${banner.imageUrl})` }}
-                />
-                <div className="absolute inset-0 bg-black/55 transition-opacity duration-300 group-hover:bg-black/45" />
-                <div className="absolute inset-0 flex flex-col justify-end p-6 z-10 text-left">
-                  <span className="bg-red-600 text-white font-bold text-[10px] uppercase px-2.5 py-1 rounded tracking-wider w-max mb-3">
-                    {banner.bannerType}
-                  </span>
-                  <h3 className="font-serif text-xl font-semibold text-white mb-2">
-                    {banner.name}
+          {(() => {
+            const promoBanners = banners.filter(b => b.bannerType !== "Homepage Banner");
+            if (promoBanners.length === 0) {
+              return (
+                <div className="col-span-full text-center py-8 text-neutral-500 font-light text-sm bg-neutral-50 border border-gray-100 rounded-2xl mb-12">
+                  No active promotional offers.
+                </div>
+              );
+            }
+
+            const leftBanner = promoBanners[0];
+            const rightBanners = promoBanners.slice(1);
+
+            const renderContent = (banner) => {
+              const parts = banner.name.split('|');
+              const discountText = parts.length > 1 ? parts[0] : null;
+              const title = parts.length > 1 ? parts[1] : banner.name;
+
+              return (
+                <div className="absolute inset-0 flex flex-col justify-center p-8 lg:p-12 z-10 text-left w-full lg:w-2/3">
+                  {discountText && (
+                    <span className="bg-[#e63946] text-white font-bold text-xs uppercase px-3 py-1.5 rounded-full tracking-wider w-max mb-4 shadow-sm">
+                      {discountText}
+                    </span>
+                  )}
+                  <h3 className="font-serif text-2xl lg:text-3xl font-medium text-white mb-4 leading-snug drop-shadow-md">
+                    {title}
                   </h3>
                   <a 
                     href={banner.linkUrl || "#"} 
-                    className="text-white font-medium text-xs flex items-center gap-1 group/btn hover:text-gold-400 transition-colors tracking-wider"
+                    className="text-white font-medium text-sm flex items-center gap-2 group/btn hover:text-gold-400 transition-colors tracking-wider w-max"
                   >
-                    explore Now
-                    <span className="transform group-hover/btn:translate-x-0.5 transition-transform duration-300">→</span>
+                    shop Now
+                    <span className="transform group-hover/btn:translate-x-1 transition-transform duration-300 font-sans">→</span>
                   </a>
                 </div>
+              );
+            };
+
+            return (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
+                {/* Left Large Banner */}
+                {leftBanner && (
+                  <div className="relative overflow-hidden rounded-2xl min-h-[300px] lg:min-h-[504px] group">
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                      style={{ backgroundImage: `url(${leftBanner.imageUrl})` }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent transition-opacity duration-300 group-hover:bg-black/50" />
+                    {renderContent(leftBanner)}
+                  </div>
+                )}
+
+                {/* Right Stacked Banners */}
+                {rightBanners.length > 0 && (
+                  <div className="flex flex-col gap-6 h-full">
+                    {rightBanners.map((banner) => (
+                      <div key={banner.id} className="relative overflow-hidden rounded-2xl flex-1 min-h-[240px] group">
+                        <div 
+                          className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+                          style={{ backgroundImage: `url(${banner.imageUrl})` }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent transition-opacity duration-300 group-hover:bg-black/50" />
+                        {renderContent(banner)}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-            ))}
-            {banners.filter(b => b.bannerType !== "Homepage Banner").length === 0 && (
-              <div className="col-span-full text-center py-8 text-neutral-500 font-light text-sm bg-neutral-50 border border-gray-100 rounded-2xl">
-                No active promotional offers.
-              </div>
-            )}
-          </div>
+            );
+          })()}
 
           {/* Centered CTA button */}
           <div className="flex justify-center mb-12">
