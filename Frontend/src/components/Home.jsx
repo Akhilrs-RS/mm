@@ -213,7 +213,7 @@ export default function Home() {
                 </p>
                 <div>
                   <a 
-                    href="#explore-bridal" 
+                    href="#catalogue?collection=Bridal%20Collection" 
                     className="inline-flex items-center text-gray-900 hover:text-gold-600 font-semibold text-xs uppercase tracking-wider transition-all duration-300 group"
                   >
                     explore 
@@ -244,7 +244,7 @@ export default function Home() {
                 </p>
                 <div>
                   <a 
-                    href="#explore-wedding" 
+                    href="#catalogue?collection=Wedding%20Collection" 
                     className="inline-flex items-center text-gray-900 hover:text-gold-600 font-semibold text-xs uppercase tracking-wider transition-all duration-300 group"
                   >
                     explore 
@@ -275,7 +275,7 @@ export default function Home() {
                 </p>
                 <div>
                   <a 
-                    href="#explore-traditional" 
+                    href="#catalogue?collection=Traditional%20Collection" 
                     className="inline-flex items-center text-gray-900 hover:text-gold-600 font-semibold text-xs uppercase tracking-wider transition-all duration-300 group"
                   >
                     explore 

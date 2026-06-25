@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Footer from './Footer';
 import Nav from './Nav';
 
@@ -31,7 +31,8 @@ const productsData = [
     originalPrice: 1600,
     image: ca1Img,
     badgeLeft: "Best Seller",
-    badgeRight: "10% OFF"
+    badgeRight: "10% OFF",
+    collection: "Wedding Collection"
   },
   {
     id: 2,
@@ -41,7 +42,8 @@ const productsData = [
     originalPrice: 2600,
     image: ca2Img,
     badgeLeft: "Best Seller",
-    badgeRight: "30% OFF"
+    badgeRight: "30% OFF",
+    collection: "Wedding Collection"
   },
   {
     id: 3,
@@ -51,7 +53,8 @@ const productsData = [
     originalPrice: 1600,
     image: ca3Img,
     badgeLeft: "Best Seller",
-    badgeRight: "10% OFF"
+    badgeRight: "10% OFF",
+    collection: "Bridal Collection"
   },
   {
     id: 4,
@@ -61,7 +64,8 @@ const productsData = [
     originalPrice: 6600,
     image: ca4Img,
     badgeLeft: "Best Seller",
-    badgeRight: "10% OFF"
+    badgeRight: "10% OFF",
+    collection: "Traditional Collection"
   },
   {
     id: 5,
@@ -71,7 +75,8 @@ const productsData = [
     originalPrice: 400,
     image: ca5Img,
     badgeLeft: "Best Seller",
-    badgeRight: "20% OFF"
+    badgeRight: "20% OFF",
+    collection: "Modern Collection"
   },
   {
     id: 6,
@@ -81,7 +86,8 @@ const productsData = [
     originalPrice: 900,
     image: ca6Img,
     badgeLeft: "Best Seller",
-    badgeRight: "12% OFF"
+    badgeRight: "12% OFF",
+    collection: "Traditional Collection"
   },
   {
     id: 7,
@@ -91,7 +97,8 @@ const productsData = [
     originalPrice: null,
     image: ca7Img,
     badgeLeft: "Hot Deal",
-    badgeRight: ""
+    badgeRight: "",
+    collection: "Modern Collection"
   },
   {
     id: 8,
@@ -101,7 +108,8 @@ const productsData = [
     originalPrice: null,
     image: ca8Img,
     badgeLeft: "Hot Deal",
-    badgeRight: ""
+    badgeRight: "",
+    collection: "Modern Collection"
   },
   {
     id: 9,
@@ -111,7 +119,8 @@ const productsData = [
     originalPrice: null,
     image: ca9Img,
     badgeLeft: "Hot Deal",
-    badgeRight: ""
+    badgeRight: "",
+    collection: "Modern Collection"
   },
   {
     id: 10,
@@ -121,7 +130,8 @@ const productsData = [
     originalPrice: null,
     image: ca10Img,
     badgeLeft: "Hot Deal",
-    badgeRight: ""
+    badgeRight: "",
+    collection: "Bridal Collection"
   },
   {
     id: 11,
@@ -131,7 +141,8 @@ const productsData = [
     originalPrice: null,
     image: ca11Img,
     badgeLeft: "Hot Deal",
-    badgeRight: ""
+    badgeRight: "",
+    collection: "Traditional Collection"
   },
   {
     id: 12,
@@ -141,7 +152,8 @@ const productsData = [
     originalPrice: null,
     image: ca12Img,
     badgeLeft: "Hot Deal",
-    badgeRight: ""
+    badgeRight: "",
+    collection: "Wedding Collection"
   },
   {
     id: 13,
@@ -151,7 +163,8 @@ const productsData = [
     originalPrice: null,
     image: ca13Img,
     badgeLeft: "Hot Deal",
-    badgeRight: ""
+    badgeRight: "",
+    collection: "Traditional Collection"
   },
   {
     id: 14,
@@ -161,7 +174,8 @@ const productsData = [
     originalPrice: null,
     image: ca14Img,
     badgeLeft: "Hot Deal",
-    badgeRight: ""
+    badgeRight: "",
+    collection: "Party Wear Collection"
   },
   {
     id: 15,
@@ -169,26 +183,51 @@ const productsData = [
     category: "Bangles",
     price: 1500,
     originalPrice: null,
-    image: ca15Img, // Renders blank
+    image: ca15Img,
     badgeLeft: "Hot Deal",
-    badgeRight: ""
+    badgeRight: "",
+    collection: "Bridal Collection"
   }
 ];
 
 export default function Catalogue() {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
+  const [collectionFilter, setCollectionFilter] = useState(() => {
+    const hash = window.location.hash;
+    const match = hash.match(/[?&]collection=([^&]+)/);
+    return match ? decodeURIComponent(match[1]) : "All";
+  });
 
-  // Filter products based on search term and category
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash;
+      const match = hash.match(/[?&]collection=([^&]+)/);
+      setCollectionFilter(match ? decodeURIComponent(match[1]) : "All");
+    };
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
+
+  const handleCollectionChange = (val) => {
+    setCollectionFilter(val);
+    if (val === "All") {
+      window.location.hash = "#catalogue";
+    } else {
+      window.location.hash = `#catalogue?collection=${encodeURIComponent(val)}`;
+    }
+  };
+
+  // Filter products based on search term, category, and collection
   const filteredProducts = productsData.filter(product => {
     const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           product.category.toLowerCase().includes(searchTerm.toLowerCase());
     
-    if (categoryFilter === "All") {
-      return matchesSearch;
-    } else {
-      return matchesSearch && product.category.toLowerCase() === categoryFilter.toLowerCase();
-    }
+    const matchesCategory = categoryFilter === "All" || product.category.toLowerCase() === categoryFilter.toLowerCase();
+    
+    const matchesCollection = collectionFilter === "All" || product.collection === collectionFilter;
+
+    return matchesSearch && matchesCategory && matchesCollection;
   });
 
   return (
@@ -255,12 +294,18 @@ export default function Catalogue() {
                 <option value="Party Wear Jewellery">Party Wear</option>
               </select>
 
-              <select className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-gold-500 focus:bg-white transition-colors">
-                <option>All Collections</option>
-                <option>Bridal Collection</option>
-                <option>Wedding Collection</option>
-                <option>Traditional Collection</option>
-                <option>Modern Collection</option>
+              <select 
+                value={collectionFilter}
+                onChange={(e) => handleCollectionChange(e.target.value)}
+                className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-gold-500 focus:bg-white transition-colors"
+              >
+                <option value="All">All Collections</option>
+                <option value="Bridal Collection">Bridal Collection</option>
+                <option value="Wedding Collection">Wedding Collection</option>
+                <option value="Traditional Collection">Traditional Collection</option>
+                <option value="Modern Collection">Modern Collection</option>
+                <option value="Party Wear Collection">Party Wear Collection</option>
+                <option value="Festival Collections">Festival Collections</option>
               </select>
 
               <select className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-gold-500 focus:bg-white transition-colors">

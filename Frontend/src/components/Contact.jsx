@@ -16,16 +16,23 @@ export default function Contact() {
   const handleInquirySubmit = async (e) => {
     e.preventDefault();
     setStatusMsg({ success: false, text: '' });
+
+    if (phone && phone.length !== 10) {
+      setStatusMsg({ success: false, text: 'Please enter a valid 10-digit phone number.' });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       const apiHost = window.location.hostname;
+      const formattedPhone = phone ? `+91 ${phone}` : '';
       const response = await fetch(`http://${apiHost}:5005/api/inquiries`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ customerName, email, phone, message }),
+        body: JSON.stringify({ customerName, email, phone: formattedPhone, message }),
       });
 
       const data = await response.json();
@@ -239,13 +246,18 @@ export default function Contact() {
 
             <div className="space-y-2">
               <label className="block text-xs uppercase tracking-wider text-gray-500 font-medium">Phone Number</label>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="e.g. +91 98765 43210"
-                className="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#aa7c11] transition-colors"
-              />
+              <div className="flex rounded-lg border border-gray-200 focus-within:border-[#aa7c11] overflow-hidden transition-colors">
+                <span className="bg-gray-50 border-r border-gray-200 px-3.5 py-3 text-xs text-gray-500 flex items-center select-none font-medium">
+                  +91
+                </span>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  placeholder="98765 43210"
+                  className="w-full bg-white px-4 py-3 text-xs text-gray-900 placeholder-gray-400 focus:outline-none"
+                />
+              </div>
             </div>
 
             <div className="space-y-2">

@@ -38,6 +38,23 @@ function App() {
       }
 
       // Public site routing
+      if (hash.startsWith('#collections/')) {
+        const collectionId = parseInt(hash.split('/')[1]);
+        const collectionNames = {
+          1: "Bridal Collection",
+          2: "Wedding Collection",
+          3: "Traditional Collection",
+          4: "Modern Collection",
+          5: "Party Wear Collection",
+          6: "Festival Collections"
+        };
+        const collectionName = collectionNames[collectionId];
+        if (collectionName) {
+          window.location.hash = `#catalogue?collection=${encodeURIComponent(collectionName)}`;
+          return;
+        }
+      }
+
       if (hash.startsWith('#catalogue')) {
         setCurrentPage('catalogue')
         window.scrollTo({ top: 0, behavior: 'smooth' })

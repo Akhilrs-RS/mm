@@ -264,7 +264,7 @@ export default function AdminDashboard({ onLogout }) {
 
   const handleCategorySubmit = async (e) => {
     e.preventDefault();
-    const endpoint = currentCategory ? `categories/${currentCategory.Id}` : 'categories';
+    const endpoint = currentCategory ? `categories/${currentCategory.id}` : 'categories';
     const method = currentCategory ? 'PUT' : 'POST';
 
     const result = await apiFetch(endpoint, {
@@ -305,7 +305,7 @@ export default function AdminDashboard({ onLogout }) {
 
   const handleCollectionSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = currentCollection ? `collections/${currentCollection.Id}` : 'collections';
+    const endpoint = currentCollection ? `collections/${currentCollection.id}` : 'collections';
     const method = currentCollection ? 'PUT' : 'POST';
 
     // Parse image ID
@@ -340,7 +340,7 @@ export default function AdminDashboard({ onLogout }) {
       description: '',
       price: 0,
       discount: 0,
-      categoryId: categories[0]?.Id || '',
+      categoryId: categories[0]?.id || '',
       collectionId: '',
       isFeatured: false,
       imageIds: []
@@ -365,7 +365,7 @@ export default function AdminDashboard({ onLogout }) {
 
   const handleProductSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = currentProduct ? `products/${currentProduct.Id}` : 'products';
+    const endpoint = currentProduct ? `products/${currentProduct.id}` : 'products';
     const method = currentProduct ? 'PUT' : 'POST';
 
     const payload = {
@@ -422,7 +422,7 @@ export default function AdminDashboard({ onLogout }) {
 
   const handleOfferSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = currentOffer ? `offers/${currentOffer.Id}` : 'offers';
+    const endpoint = currentOffer ? `offers/${currentOffer.id}` : 'offers';
     const method = currentOffer ? 'PUT' : 'POST';
 
     const payload = {
@@ -481,7 +481,7 @@ export default function AdminDashboard({ onLogout }) {
       return;
     }
 
-    const endpoint = currentBanner ? `banners/${currentBanner.Id}` : 'banners';
+    const endpoint = currentBanner ? `banners/${currentBanner.id}` : 'banners';
     const method = currentBanner ? 'PUT' : 'POST';
 
     const payload = {
