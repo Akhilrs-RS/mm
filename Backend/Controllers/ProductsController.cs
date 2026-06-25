@@ -27,6 +27,7 @@ namespace Backend.Controllers
             public int CategoryId { get; set; }
             public int? CollectionId { get; set; }
             public bool IsFeatured { get; set; }
+            public bool IsNewArrival { get; set; }
             public string CustomBadge { get; set; } = string.Empty;
             public List<int> ImageIds { get; set; } = new();
         }
@@ -43,6 +44,7 @@ namespace Backend.Controllers
             public int? CollectionId { get; set; }
             public string CollectionName { get; set; } = string.Empty;
             public bool IsFeatured { get; set; }
+            public bool IsNewArrival { get; set; }
             public string CustomBadge { get; set; } = string.Empty;
             public int ViewsCount { get; set; }
             public List<int> ImageIds { get; set; } = new();
@@ -75,6 +77,7 @@ namespace Backend.Controllers
                     CollectionId = p.CollectionId,
                     CollectionName = p.CollectionId.HasValue && collections.TryGetValue(p.CollectionId.Value, out var colName) ? colName : "None",
                     IsFeatured = p.IsFeatured,
+                    IsNewArrival = p.IsNewArrival,
                     CustomBadge = p.CustomBadge,
                     ViewsCount = p.ViewsCount,
                     ImageIds = linkedImages,
@@ -118,6 +121,7 @@ namespace Backend.Controllers
                 CollectionId = product.CollectionId,
                 CollectionName = collection?.Name ?? "None",
                 IsFeatured = product.IsFeatured,
+                IsNewArrival = product.IsNewArrival,
                 CustomBadge = product.CustomBadge,
                 ViewsCount = product.ViewsCount,
                 ImageIds = linkedImageIds,
@@ -145,6 +149,7 @@ namespace Backend.Controllers
                 CategoryId = request.CategoryId,
                 CollectionId = request.CollectionId,
                 IsFeatured = request.IsFeatured,
+                IsNewArrival = request.IsNewArrival,
                 CustomBadge = request.CustomBadge ?? string.Empty,
                 ViewsCount = 0,
                 CreatedAt = DateTime.UtcNow
@@ -188,6 +193,7 @@ namespace Backend.Controllers
             existing.CategoryId = request.CategoryId;
             existing.CollectionId = request.CollectionId;
             existing.IsFeatured = request.IsFeatured;
+            existing.IsNewArrival = request.IsNewArrival;
             existing.CustomBadge = request.CustomBadge ?? string.Empty;
 
             // Remove existing image links

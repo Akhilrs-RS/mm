@@ -94,21 +94,21 @@ namespace Backend.Data
             if (!context.Products.Any())
             {
                 // Rings
-                var ring1 = new Product { Name = "Classic Solitaire Gold Ring", Description = "A classic gold band topped with a brilliant diamond cut.", Price = 1200, Discount = 10, CategoryId = categories["Rings"], CollectionId = collections["Festival Collection"], IsFeatured = true, CustomBadge = "Hot Deal", ViewsCount = 450, CreatedAt = DateTime.UtcNow.AddDays(-15) };
-                var ring2 = new Product { Name = "Royal Emerald Statement Ring", Description = "An ornate gold band featuring a large central emerald.", Price = 1800, Discount = 0, CategoryId = categories["Rings"], CollectionId = collections["Bridal Collection"], IsFeatured = true, CustomBadge = "Featured", ViewsCount = 380, CreatedAt = DateTime.UtcNow.AddDays(-10) };
+                var ring1 = new Product { Name = "Classic Solitaire Gold Ring", Description = "A classic gold band topped with a brilliant diamond cut.", Price = 1200, Discount = 10, CategoryId = categories["Rings"], CollectionId = collections["Festival Collection"], IsFeatured = true, IsNewArrival = false, CustomBadge = "Hot Deal", ViewsCount = 450, CreatedAt = DateTime.UtcNow.AddDays(-15) };
+                var ring2 = new Product { Name = "Royal Emerald Statement Ring", Description = "An ornate gold band featuring a large central emerald.", Price = 1800, Discount = 0, CategoryId = categories["Rings"], CollectionId = collections["Bridal Collection"], IsFeatured = true, IsNewArrival = true, CustomBadge = "Featured", ViewsCount = 380, CreatedAt = DateTime.UtcNow.AddDays(-10) };
                 
                 // Necklaces
-                var neck1 = new Product { Name = "Temple Design Gold Tone Necklace Set", Description = "Detailed temple carvings with red stone drops.", Price = 3500, Discount = 15, CategoryId = categories["Necklaces"], CollectionId = collections["Bridal Collection"], IsFeatured = true, CustomBadge = "Featured", ViewsCount = 920, CreatedAt = DateTime.UtcNow.AddDays(-30) };
-                var neck2 = new Product { Name = "Classic Kundan Choker", Description = "Elegant choker set with real kundan details and pearls.", Price = 2800, Discount = 5, CategoryId = categories["Necklaces"], CollectionId = collections["Wedding Collection"], IsFeatured = false, CustomBadge = "Best Seller", ViewsCount = 210, CreatedAt = DateTime.UtcNow.AddDays(-5) };
+                var neck1 = new Product { Name = "Temple Design Gold Tone Necklace Set", Description = "Detailed temple carvings with red stone drops.", Price = 3500, Discount = 15, CategoryId = categories["Necklaces"], CollectionId = collections["Bridal Collection"], IsFeatured = true, IsNewArrival = false, CustomBadge = "Featured", ViewsCount = 920, CreatedAt = DateTime.UtcNow.AddDays(-30) };
+                var neck2 = new Product { Name = "Classic Kundan Choker", Description = "Elegant choker set with real kundan details and pearls.", Price = 2800, Discount = 5, CategoryId = categories["Necklaces"], CollectionId = collections["Wedding Collection"], IsFeatured = false, IsNewArrival = true, CustomBadge = "Best Seller", ViewsCount = 210, CreatedAt = DateTime.UtcNow.AddDays(-5) };
                 
                 // Earrings
-                var ear1 = new Product { Name = "Gold Filigree Jhumka Earrings", Description = "Traditional gold filigree jhumkas with pearl beads.", Price = 950, Discount = 0, CategoryId = categories["Earrings"], CollectionId = collections["Wedding Collection"], IsFeatured = false, CustomBadge = "Best Seller", ViewsCount = 340, CreatedAt = DateTime.UtcNow.AddDays(-20) };
+                var ear1 = new Product { Name = "Gold Filigree Jhumka Earrings", Description = "Traditional gold filigree jhumkas with pearl beads.", Price = 950, Discount = 0, CategoryId = categories["Earrings"], CollectionId = collections["Wedding Collection"], IsFeatured = false, IsNewArrival = true, CustomBadge = "Best Seller", ViewsCount = 340, CreatedAt = DateTime.UtcNow.AddDays(-20) };
                 
                 // Bangles
-                var bang1 = new Product { Name = "Meenakari Gold Tone Bangle Set", Description = "Beautiful meenakari detailing on pure gold plating.", Price = 1500, Discount = 25, CategoryId = categories["Bangles"], CollectionId = collections["Bridal Collection"], IsFeatured = true, CustomBadge = "Hot Deal", ViewsCount = 680, CreatedAt = DateTime.UtcNow.AddDays(-12) };
+                var bang1 = new Product { Name = "Meenakari Gold Tone Bangle Set", Description = "Beautiful meenakari detailing on pure gold plating.", Price = 1500, Discount = 25, CategoryId = categories["Bangles"], CollectionId = collections["Bridal Collection"], IsFeatured = true, IsNewArrival = false, CustomBadge = "Hot Deal", ViewsCount = 680, CreatedAt = DateTime.UtcNow.AddDays(-12) };
  
                 // Anklets
-                var ank1 = new Product { Name = "Silver Plated Designer Anklet Set", Description = "Dainty ghungroo beads on sterling silver plated chains.", Price = 750, Discount = 0, CategoryId = categories["Anklets"], CollectionId = collections["Festival Collection"], IsFeatured = false, CustomBadge = "Best Seller", ViewsCount = 120, CreatedAt = DateTime.UtcNow.AddDays(-2) };
+                var ank1 = new Product { Name = "Silver Plated Designer Anklet Set", Description = "Dainty ghungroo beads on sterling silver plated chains.", Price = 750, Discount = 0, CategoryId = categories["Anklets"], CollectionId = collections["Festival Collection"], IsFeatured = false, IsNewArrival = true, CustomBadge = "Best Seller", ViewsCount = 120, CreatedAt = DateTime.UtcNow.AddDays(-2) };
 
                 context.Products.AddRange(ring1, ring2, neck1, neck2, ear1, bang1, ank1);
                 context.SaveChanges();
@@ -166,6 +166,23 @@ namespace Backend.Data
                     new Inquiry { CustomerName = "Priya Sharma", Email = "priya@gmail.com", Phone = "+91 98111 22233", Message = "Hi, I am interested in purchasing the Temple Design Gold Tone Necklace. Can I customize the length of the chain?", CreatedAt = DateTime.UtcNow.AddHours(-3) },
                     new Inquiry { CustomerName = "Amit Patel", Email = "amit.patel@yahoo.com", Phone = "+91 98222 33344", Message = "Hello, do you offer cash on delivery inside Mumbai? Also, what is the shipping time for wedding bangles?", CreatedAt = DateTime.UtcNow.AddDays(-1) },
                     new Inquiry { CustomerName = "Ananya Roy", Email = "ananya.r@hotmail.com", Phone = "+91 98333 44455", Message = "Is the Classic Solitaire Gold Ring available in Rose Gold color plating?", CreatedAt = DateTime.UtcNow.AddDays(-2) }
+                );
+                context.SaveChanges();
+            }
+
+            // 10. Seed GalleryItems if empty
+            if (!context.GalleryItems.Any())
+            {
+                context.GalleryItems.AddRange(
+                    new GalleryItem { Title = "Temple Design Gold Tone Necklace", Category = "JEWELLERY", ImageId = necklaceImageId },
+                    new GalleryItem { Title = "Anklet Set", Category = "COLLECTIONS", ImageId = ankletImageId },
+                    new GalleryItem { Title = "Traditional Jhumka Earrings", Category = "JEWELLERY", ImageId = earringImageId },
+                    new GalleryItem { Title = "Elegant Crystal Pendant Chain", Category = "COLLECTIONS", ImageId = necklaceImageId },
+                    new GalleryItem { Title = "Royal Polki Bridal Complete Set", Category = "JEWELLERY", ImageId = necklaceImageId },
+                    new GalleryItem { Title = "Temple Gold covering Necklace Set", Category = "COLLECTIONS", ImageId = necklaceImageId },
+                    new GalleryItem { Title = "Kundan Statement Ring Set", Category = "JEWELLERY", ImageId = ringImageId },
+                    new GalleryItem { Title = "Bridal Set", Category = "STORE", ImageId = necklaceImageId },
+                    new GalleryItem { Title = "Palakka Choker", Category = "EVENTS", ImageId = bangleImageId }
                 );
                 context.SaveChanges();
             }

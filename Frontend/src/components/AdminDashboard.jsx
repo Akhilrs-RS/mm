@@ -25,6 +25,7 @@ export default function AdminDashboard({ onLogout }) {
   const [banners, setBanners] = useState([]);
   const [dbImages, setDbImages] = useState([]);
   const [inquiries, setInquiries] = useState([]);
+  const [galleryItems, setGalleryItems] = useState([]);
 
   // Load states
   const [isLoading, setIsLoading] = useState(false);
@@ -36,6 +37,7 @@ export default function AdminDashboard({ onLogout }) {
   const [currentCollection, setCurrentCollection] = useState(null);
   const [currentOffer, setCurrentOffer] = useState(null);
   const [currentBanner, setCurrentBanner] = useState(null);
+  const [currentGalleryItem, setCurrentGalleryItem] = useState(null);
 
   // Forms Visibility
   const [showProductModal, setShowProductModal] = useState(false);
@@ -43,10 +45,11 @@ export default function AdminDashboard({ onLogout }) {
   const [showCollectionModal, setShowCollectionModal] = useState(false);
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [showBannerModal, setShowBannerModal] = useState(false);
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
 
   // Upload/Image Library Modal inside form
   const [showImagePicker, setShowImagePicker] = useState(false);
-  const [targetImageField, setTargetImageField] = useState(''); // 'product', 'collection', 'banner'
+  const [targetImageField, setTargetImageField] = useState(''); // 'product', 'collection', 'banner', 'gallery'
   const [uploadFile, setUploadFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -67,6 +70,7 @@ export default function AdminDashboard({ onLogout }) {
     categoryId: '',
     collectionId: '',
     isFeatured: false,
+    isNewArrival: false,
     customBadge: '',
     imageIds: []
   });
@@ -100,6 +104,13 @@ export default function AdminDashboard({ onLogout }) {
     imageId: '',
     bannerType: 'Homepage Banner',
     linkUrl: ''
+  });
+
+  // Gallery Form State
+  const [galleryForm, setGalleryForm] = useState({
+    title: '',
+    category: 'JEWELLERY',
+    imageId: ''
   });
 
   const username = localStorage.getItem('admin_username') || 'Administrator';
@@ -164,6 +175,11 @@ export default function AdminDashboard({ onLogout }) {
       if (inquiriesList) setInquiries(inquiriesList);
     }
 
+    if (activeTab === 'gallery') {
+      const itemsList = await apiFetch('galleryitems');
+      if (itemsList) setGalleryItems(itemsList);
+    }
+
     // Always keep database images updated
     const imgsList = await apiFetch('admin/images');
     if (imgsList) setDbImages(imgsList);
@@ -225,6 +241,8 @@ export default function AdminDashboard({ onLogout }) {
       setColForm(prev => ({ ...prev, imageId: imageId }));
     } else if (targetImageField === 'banner') {
       setBannerForm(prev => ({ ...prev, imageId: imageId }));
+    } else if (targetImageField === 'gallery') {
+      setGalleryForm(prev => ({ ...prev, imageId: imageId }));
     }
     setShowImagePicker(false);
   };
@@ -344,6 +362,7 @@ export default function AdminDashboard({ onLogout }) {
       categoryId: categories[0]?.id || '',
       collectionId: '',
       isFeatured: false,
+      isNewArrival: false,
       customBadge: '',
       imageIds: []
     });
@@ -360,6 +379,7 @@ export default function AdminDashboard({ onLogout }) {
       categoryId: prod.categoryId,
       collectionId: prod.collectionId !== 'None' ? prod.collectionId || '' : '',
       isFeatured: prod.isFeatured,
+      isNewArrival: prod.isNewArrival,
       customBadge: prod.customBadge || '',
       imageIds: prod.imageIds || []
     });
@@ -507,6 +527,64 @@ export default function AdminDashboard({ onLogout }) {
   const handleBannerDelete = async (id) => {
     if (!confirm('Are you sure you want to delete this banner?')) return;
     const result = await apiFetch(`banners/${id}`, { method: 'DELETE' });
+    if (result) loadData();
+  };
+
+  // Gallery Item CRUD
+  const openAddGalleryItem = () => {
+    setCurrentGalleryItem(null);
+    setGalleryForm({
+      title: '',
+      category: 'JEWELLERY',
+      imageId: ''
+    });
+    setShowGalleryModal(true);
+  };
+
+  const openEditGalleryItem = (item) => {
+    setCurrentGalleryItem(item);
+    setGalleryForm({
+      title: item.title,
+      category: item.category,
+      imageId: item.imageId || ''
+    });
+    setShowGalleryModal(true);
+  };
+
+  const handleGallerySubmit = async (e) => {
+    e.preventDefault();
+    if (!galleryForm.imageId) {
+      alert('Please upload/select a gallery image.');
+      return;
+    }
+
+    const endpoint = currentGalleryItem ? `galleryitems/${currentGalleryItem.id}` : 'galleryitems';
+    const method = currentGalleryItem ? 'PUT' : 'POST';
+
+    const payload = {
+      title: galleryForm.title,
+      category: galleryForm.category,
+      imageId: parseInt(galleryForm.imageId)
+    };
+    if (currentGalleryItem) {
+      payload.id = currentGalleryItem.id;
+    }
+
+    const result = await apiFetch(endpoint, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (result) {
+      setShowGalleryModal(false);
+      loadData();
+    }
+  };
+
+  const handleGalleryDelete = async (id) => {
+    if (!confirm('Are you sure you want to delete this gallery item?')) return;
+    const result = await apiFetch(`galleryitems/${id}`, { method: 'DELETE' });
     if (result) loadData();
   };
 
@@ -706,6 +784,14 @@ export default function AdminDashboard({ onLogout }) {
               Banner Management
             </button>
             <button
+              onClick={() => setActiveTab('gallery')}
+              className={`w-full text-left px-4 py-3 rounded-lg text-sm tracking-wide transition-all cursor-pointer ${
+                activeTab === 'gallery' ? 'bg-[#aa7c11] text-white font-medium' : 'text-neutral-400 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              Gallery Management
+            </button>
+            <button
               onClick={() => setActiveTab('inquiries')}
               className={`w-full text-left px-4 py-3 rounded-lg text-sm tracking-wide transition-all cursor-pointer ${
                 activeTab === 'inquiries' ? 'bg-[#aa7c11] text-white font-medium' : 'text-neutral-400 hover:text-white hover:bg-white/5'
@@ -878,7 +964,7 @@ export default function AdminDashboard({ onLogout }) {
                               <h5 className="text-xs font-semibold text-white">{inq.customerName}</h5>
                               <span className="text-[9px] text-neutral-500">{new Date(inq.createdAt).toLocaleDateString()}</span>
                             </div>
-                            <p className="text-[10px] text-neutral-400 truncate">{inq.email} • {inq.phone}</p>
+                            <p className="text-[10px] text-neutral-400 truncate">{inq.email}{inq.phone ? ` • ${inq.phone}` : ''}</p>
                             <p className="text-xs text-neutral-300 leading-relaxed font-light italic bg-black/40 p-2.5 rounded border border-white/5">
                               "{inq.message}"
                             </p>
@@ -921,6 +1007,8 @@ export default function AdminDashboard({ onLogout }) {
                         <th className="py-3 px-2 font-medium hidden md:table-cell">Collection</th>
                         <th className="py-3 px-2 font-medium">Price</th>
                         <th className="py-3 px-2 font-medium hidden sm:table-cell">Discount</th>
+                        <th className="py-3 px-2 text-center font-medium hidden lg:table-cell">Featured</th>
+                        <th className="py-3 px-2 text-center font-medium hidden lg:table-cell">New Arrival</th>
                         <th className="py-3 px-2 text-center font-medium hidden md:table-cell">Badge</th>
                         <th className="py-3 px-2 text-center font-medium">Actions</th>
                       </tr>
@@ -942,6 +1030,20 @@ export default function AdminDashboard({ onLogout }) {
                           <td className="py-2 px-2 text-neutral-450 text-xs hidden md:table-cell">{prod.collectionName}</td>
                           <td className="py-2 px-2 font-semibold text-gold-400 text-xs">₹{prod.price}</td>
                           <td className="py-2 px-2 text-emerald-400 text-xs hidden sm:table-cell">{prod.discount}%</td>
+                          <td className="py-2 px-2 text-center hidden lg:table-cell">
+                            {prod.isFeatured ? (
+                              <span className="inline-flex items-center gap-1 bg-amber-500/15 text-amber-400 text-[9px] font-bold uppercase tracking-wider py-0.5 px-2 rounded-full border border-amber-500/30">★ Yes</span>
+                            ) : (
+                              <span className="text-neutral-600 text-[10px]">—</span>
+                            )}
+                          </td>
+                          <td className="py-2 px-2 text-center hidden lg:table-cell">
+                            {prod.isNewArrival ? (
+                              <span className="inline-flex items-center gap-1 bg-emerald-500/15 text-emerald-400 text-[9px] font-bold uppercase tracking-wider py-0.5 px-2 rounded-full border border-emerald-500/30">✦ Yes</span>
+                            ) : (
+                              <span className="text-neutral-600 text-[10px]">—</span>
+                            )}
+                          </td>
                           <td className="py-2 px-2 text-center text-xs hidden md:table-cell">
                             {prod.customBadge ? (
                               <span className="bg-[#ab8d6d]/20 text-gold-300 text-[9px] font-bold uppercase tracking-wider py-0.5 px-2 rounded-full border border-[#ab8d6d]/30">{prod.customBadge}</span>
@@ -1213,40 +1315,110 @@ export default function AdminDashboard({ onLogout }) {
             </div>
           )}
 
+          {/* 6.5. GALLERY MANAGEMENT */}
+          {activeTab === 'gallery' && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  <h3 className="font-serif text-2xl font-bold text-white">Gallery Management</h3>
+                  <p className="text-neutral-400 text-xs font-light">Add, edit, and organize images displayed on the public Gallery page.</p>
+                </div>
+                <button
+                  onClick={openAddGalleryItem}
+                  className="bg-[#aa7c11] hover:bg-gold-500 text-white font-medium text-xs tracking-widest uppercase py-2.5 px-5 rounded-lg shadow-md transition-colors cursor-pointer"
+                >
+                  Add Gallery Item
+                </button>
+              </div>
+
+              {/* Gallery Grid */}
+              {galleryItems.length === 0 ? (
+                <p className="text-neutral-500 text-xs text-center py-8 bg-neutral-900 border border-white/5 rounded-2xl">No gallery items found.</p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {galleryItems.map(item => {
+                    const linkedImage = dbImages.find(img => img.id === item.imageId);
+                    const imageUrl = linkedImage ? `${BACKEND_URL}/api/admin/images/${item.imageId}` : null;
+                    return (
+                      <div key={item.id} className="bg-neutral-900 border border-white/5 rounded-2xl overflow-hidden flex flex-col justify-between group">
+                        <div className="h-44 bg-black overflow-hidden relative border-b border-white/5 flex items-center justify-center">
+                          {imageUrl ? (
+                            <img src={imageUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          ) : (
+                            <span className="text-xs text-neutral-600 uppercase tracking-widest font-light">No Image Selected</span>
+                          )}
+                          <span className="absolute top-3 left-3 bg-black/85 backdrop-blur text-gold-400 text-[9px] font-bold tracking-widest uppercase py-1.5 px-3 rounded-full border border-white/10">
+                            {item.category}
+                          </span>
+                        </div>
+
+                        <div className="p-5 space-y-3">
+                          <div>
+                            <h4 className="font-serif text-base font-bold text-white truncate">{item.title}</h4>
+                          </div>
+
+                          <div className="flex items-center justify-end gap-4 border-t border-white/5 pt-3">
+                            <button
+                              onClick={() => openEditGalleryItem(item)}
+                              className="text-xs uppercase tracking-wider text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleGalleryDelete(item.id)}
+                              className="text-xs uppercase tracking-wider text-red-500 hover:text-red-400 transition-colors cursor-pointer"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* 7. CUSTOMER INQUIRIES */}
           {activeTab === 'inquiries' && (
             <div className="space-y-6 animate-fadeIn">
               <div>
                 <h3 className="font-serif text-2xl font-bold text-white">Customer Inquiries</h3>
-                <p className="text-neutral-400 text-xs font-light">Read and archive submissions received from the customer service contacts.</p>
+                <p className="text-neutral-400 text-sm font-light">View all submissions received from customers via the contact form.</p>
               </div>
 
-              {/* Inquiries table/list */}
-              <div className="bg-neutral-900 border border-white/5 rounded-2xl p-6 space-y-4">
+              {/* Inquiries list */}
+              <div className="bg-neutral-900 border border-white/5 rounded-2xl p-6 space-y-5">
                 {inquiries.length === 0 ? (
-                  <p className="text-neutral-500 text-xs text-center py-8">No customer inquiries found.</p>
+                  <p className="text-neutral-500 text-sm text-center py-8">No customer inquiries found.</p>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-5">
                     {inquiries.map(inq => (
-                      <div key={inq.id} className="bg-black/40 border border-neutral-850 rounded-xl p-5 space-y-3 relative group">
-                        <div className="flex flex-wrap items-center justify-between gap-4">
-                          <div>
-                            <h4 className="text-sm font-bold text-white">{inq.customerName}</h4>
-                            <p className="text-[11px] text-neutral-400">{inq.email} • {inq.phone || 'No phone number'}</p>
+                      <div key={inq.id} className="bg-black/40 border border-white/8 rounded-xl p-5 space-y-4">
+                        {/* Customer Details Row */}
+                        <div className="flex flex-wrap items-start justify-between gap-3">
+                          <div className="space-y-1">
+                            <h4 className="text-base font-bold text-white tracking-wide">{inq.customerName}</h4>
+                            <p className="text-sm text-neutral-300">
+                              <span className="text-[#aa7c11]">✉</span> {inq.email}
+                              {inq.phone && (
+                                <span className="ml-3 text-neutral-400"><span className="text-[#aa7c11]">📞</span> {inq.phone}</span>
+                              )}
+                            </p>
                           </div>
-                          <div className="flex items-center gap-4">
-                            <span className="text-[10px] text-neutral-500">{new Date(inq.createdAt).toLocaleString()}</span>
-                            <button
-                              onClick={() => handleInquiryDelete(inq.id)}
-                              className="text-xs uppercase tracking-wider text-red-500 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-                            >
-                              Archive / Delete
-                            </button>
-                          </div>
+                          <span className="text-xs text-neutral-400 bg-white/5 border border-white/5 rounded-lg px-3 py-1.5 shrink-0">
+                            {new Date(inq.createdAt).toLocaleString()}
+                          </span>
                         </div>
-                        <p className="text-xs text-neutral-350 leading-relaxed font-light italic bg-black/30 p-3 rounded border border-white/5">
-                          "{inq.message}"
-                        </p>
+
+                        {/* Enquiry Message */}
+                        <div className="bg-black/30 border border-white/5 rounded-lg p-4">
+                          <p className="text-xs uppercase tracking-widest text-neutral-500 font-medium mb-2">Message</p>
+                          <p className="text-sm text-neutral-200 leading-relaxed">
+                            {inq.message}
+                          </p>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -1479,6 +1651,42 @@ export default function AdminDashboard({ onLogout }) {
                     onChange={(e) => setProdForm({ ...prodForm, customBadge: e.target.value })}
                     className="w-full bg-neutral-950 border border-white/5 rounded-lg px-4 py-2.5 text-xs text-white focus:outline-none focus:border-gold-500 transition-colors"
                   />
+                </div>
+
+                {/* Home Page Sections display options */}
+                <div className="space-y-1">
+                  <label className="text-xs uppercase tracking-wider text-neutral-400 font-light">Home Page Display</label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <label htmlFor="formIsFeatured" className="flex items-center gap-3 bg-neutral-950 border border-white/5 rounded-lg px-4 py-3 cursor-pointer hover:border-amber-500/40 transition-colors group">
+                      <input
+                        type="checkbox"
+                        id="formIsFeatured"
+                        checked={prodForm.isFeatured}
+                        onChange={(e) => setProdForm({ ...prodForm, isFeatured: e.target.checked })}
+                        className="w-4 h-4 rounded accent-amber-500 cursor-pointer shrink-0"
+                      />
+                      <div>
+                        <span className="text-xs font-semibold text-white block">Featured Collection</span>
+                        <span className="text-[10px] text-neutral-500">Show on Home page</span>
+                      </div>
+                      <span className="ml-auto text-amber-500 text-sm opacity-0 group-hover:opacity-100 transition-opacity">★</span>
+                    </label>
+
+                    <label htmlFor="formIsNewArrival" className="flex items-center gap-3 bg-neutral-950 border border-white/5 rounded-lg px-4 py-3 cursor-pointer hover:border-emerald-500/40 transition-colors group">
+                      <input
+                        type="checkbox"
+                        id="formIsNewArrival"
+                        checked={prodForm.isNewArrival}
+                        onChange={(e) => setProdForm({ ...prodForm, isNewArrival: e.target.checked })}
+                        className="w-4 h-4 rounded accent-emerald-500 cursor-pointer shrink-0"
+                      />
+                      <div>
+                        <span className="text-xs font-semibold text-white block">New Arrivals</span>
+                        <span className="text-[10px] text-neutral-500">Show on Home page</span>
+                      </div>
+                      <span className="ml-auto text-emerald-500 text-sm opacity-0 group-hover:opacity-100 transition-opacity">✦</span>
+                    </label>
+                  </div>
                 </div>
 
 
@@ -1870,6 +2078,91 @@ export default function AdminDashboard({ onLogout }) {
                     className="bg-[#aa7c11] hover:bg-gold-500 text-white font-medium text-xs tracking-widest uppercase py-2 px-5 rounded-lg transition-colors cursor-pointer"
                   >
                     {currentBanner ? 'Save' : 'Upload'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* E.5. GALLERY ITEM DIALOG MODAL */}
+      {showGalleryModal && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-neutral-900 border border-white/5 rounded-2xl w-full max-w-md shadow-2xl relative">
+            <div className="p-6 md:p-8 space-y-6">
+              <div className="flex items-center justify-between border-b border-white/5 pb-4">
+                <h4 className="font-serif text-lg font-bold text-white">
+                  {currentGalleryItem ? 'Edit Gallery Item' : 'Add Gallery Item'}
+                </h4>
+                <button
+                  onClick={() => setShowGalleryModal(false)}
+                  className="text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <form onSubmit={handleGallerySubmit} className="space-y-5">
+                <div className="space-y-2">
+                  <label className="block text-xs uppercase tracking-wider text-neutral-400">Title</label>
+                  <input
+                    type="text"
+                    required
+                    value={galleryForm.title}
+                    onChange={(e) => setGalleryForm({ ...galleryForm, title: e.target.value })}
+                    placeholder="e.g. Traditional Jhumka Earrings"
+                    className="w-full bg-black/60 border border-neutral-800 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400/50"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-xs uppercase tracking-wider text-neutral-400">Category</label>
+                  <select
+                    value={galleryForm.category}
+                    onChange={(e) => setGalleryForm({ ...galleryForm, category: e.target.value })}
+                    className="w-full bg-black/60 border border-neutral-800 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400/50"
+                  >
+                    <option value="JEWELLERY">JEWELLERY</option>
+                    <option value="COLLECTIONS">COLLECTIONS</option>
+                    <option value="STORE">STORE</option>
+                    <option value="EVENTS">EVENTS</option>
+                  </select>
+                </div>
+
+                {/* Image selection */}
+                <div className="space-y-2">
+                  <label className="block text-xs uppercase tracking-wider text-neutral-400">Gallery Image</label>
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTargetImageField('gallery');
+                        setShowImagePicker(true);
+                      }}
+                      className="bg-neutral-800 hover:bg-neutral-750 text-xs px-4 py-2 rounded-lg border border-white/5 transition-colors cursor-pointer"
+                    >
+                      {galleryForm.imageId ? 'Change Image' : 'Select Image'}
+                    </button>
+                    {galleryForm.imageId && (
+                      <img src={`${BACKEND_URL}/api/admin/images/${galleryForm.imageId}`} alt="" className="w-16 h-10 object-cover rounded-lg border border-white/5" />
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-4 border-t border-white/5 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowGalleryModal(false)}
+                    className="text-xs uppercase tracking-wider text-neutral-400 hover:text-white py-2 px-4 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-[#aa7c11] hover:bg-gold-500 text-white font-medium text-xs tracking-widest uppercase py-2 px-5 rounded-lg transition-colors cursor-pointer"
+                  >
+                    {currentGalleryItem ? 'Save' : 'Add'}
                   </button>
                 </div>
               </form>

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import Footer from './Footer';
 import Nav from './Nav';
 
@@ -41,6 +42,56 @@ const offersData = [
 ];
 
 export default function Offers() {
+  const [offers, setOffers] = useState(offersData);
+
+  useEffect(() => {
+    const fetchOffersAndProducts = async () => {
+      try {
+        const apiHost = window.location.hostname;
+        const productsRes = await fetch(`http://${apiHost}:5005/api/products`);
+        let liveProducts = [];
+        if (productsRes.ok) {
+          const productsData = await productsRes.json();
+          liveProducts = productsData.map(p => ({
+            id: p.id,
+            category: p.categoryName
+          }));
+        }
+
+        const res = await fetch(`http://${apiHost}:5005/api/offers`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data) {
+            const mapped = data.map(o => {
+              const startDate = new Date(o.startDate);
+              const endDate = new Date(o.endDate);
+              const startDateStr = startDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+              const endDateStr = endDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+              
+              // Find linked product categories
+              const linkedProds = liveProducts.filter(p => o.applicableProductIds.includes(p.id));
+              const categories = Array.from(new Set(linkedProds.map(p => p.category))).filter(Boolean).join(", ") || "All Jewellery";
+              
+              return {
+                id: o.id,
+                title: o.name,
+                badge: `${o.discountPercent}% OFF`,
+                description: `Enjoy a flat ${o.discountPercent}% off on our curated ${categories.toLowerCase()} selection. Limited time offer!`,
+                date: `${startDateStr} - ${endDateStr}`,
+                category: categories
+              };
+            });
+            setOffers(mapped);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch live offers:", err);
+      }
+    };
+
+    fetchOffersAndProducts();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#fcfbf9] text-black flex flex-col font-sans select-none">
       {/* Navigation Header */}
@@ -70,7 +121,7 @@ export default function Offers() {
       <section className="py-20 px-6 md:px-12 lg:px-24 flex-grow bg-[#fcfbf9]">
         <div className="container mx-auto max-w-5xl">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {offersData.map((offer) => (
+            {offers.map((offer) => (
               <div 
                 key={offer.id} 
                 className="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between"

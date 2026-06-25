@@ -1,82 +1,40 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Footer from './Footer';
 import Nav from './Nav';
 
-// Import assets
 import galleryHeroImg from '../assets/0.png';
-import ca11Img from '../assets/ca11.png';
-import ca8Img from '../assets/ca8.png';
-import ca13Img from '../assets/ca13.png';
-import ca9Img from '../assets/ca9.png';
-import ca10Img from '../assets/ca10.png';
-import ca4Img from '../assets/ca4.png';
-import ca12Img from '../assets/ca12.png';
-import ca3Img from '../assets/ca3.png';
-import ca6Img from '../assets/ca6.png';
-
-// Gallery Data
-const galleryData = [
-  {
-    id: 1,
-    title: "Temple Design Gold Tone Necklace",
-    category: "JEWELLERY",
-    image: ca11Img
-  },
-  {
-    id: 2,
-    title: "Anklet Set",
-    category: "COLLECTIONS",
-    image: ca8Img
-  },
-  {
-    id: 3,
-    title: "Traditional Jhumka Earrings",
-    category: "JEWELLERY",
-    image: ca13Img
-  },
-  {
-    id: 4,
-    title: "Elegant Crystal Pendant Chain",
-    category: "COLLECTIONS",
-    image: ca9Img
-  },
-  {
-    id: 5,
-    title: "Royal Polki Bridal Complete Set",
-    category: "JEWELLERY",
-    image: ca10Img
-  },
-  {
-    id: 6,
-    title: "Temple Gold covering Necklace Set",
-    category: "COLLECTIONS",
-    image: ca4Img
-  },
-  {
-    id: 7,
-    title: "Kundan Statement Ring Set",
-    category: "JEWELLERY",
-    image: ca12Img
-  },
-  {
-    id: 8,
-    title: "Bridal Set",
-    category: "STORE",
-    image: ca3Img
-  },
-  {
-    id: 9,
-    title: "Palakka Choker",
-    category: "EVENTS",
-    image: ca6Img
-  }
-];
 
 export default function Gallery() {
+  const [gallery, setGallery] = useState([]);
   const [activeFilter, setActiveFilter] = useState("ALL");
 
+  useEffect(() => {
+    const fetchGalleryData = async () => {
+      try {
+        const apiHost = window.location.hostname;
+        const res = await fetch(`http://${apiHost}:5005/api/galleryitems`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            const mapped = data.map(item => ({
+              id: item.id,
+              title: item.title,
+              category: item.category,
+              image: item.imageUrl
+            }));
+            setGallery(mapped);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch gallery items:", err);
+      }
+    };
+
+    fetchGalleryData();
+  }, []);
+
   // Filter gallery items
-  const filteredItems = galleryData.filter(item => {
+  const filteredItems = gallery.filter(item => {
     if (activeFilter === "ALL") return true;
     return item.category === activeFilter;
   });

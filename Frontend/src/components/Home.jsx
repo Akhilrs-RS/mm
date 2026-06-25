@@ -1,36 +1,17 @@
-import h1Img from '../assets/h1.png';
-import hb1Img from '../assets/hb1.png';
-import hb2Img from '../assets/hb2.png';
-import mImg from '../assets/m.png';
-import ca1Img from '../assets/ca1.png';
-import ca2Img from '../assets/ca2.jpg';
-import ca3Img from '../assets/ca3.png';
-import ca4Img from '../assets/ca4.png';
-import ca5Img from '../assets/ca5.png';
-import ca6Img from '../assets/ca6.png';
-import ca7Img from '../assets/ca7.png';
-import ca8Img from '../assets/ca8.png';
-import ca9Img from '../assets/ca9.png';
-import ca10Img from '../assets/ca10.png';
-import ca11Img from '../assets/ca11.png';
-import ca13Img from '../assets/ca13.png';
-import ca14Img from '../assets/ca14.png';
-import uImg from '../assets/u.png';
-import e1Img from '../assets/e1.png';
-import e2Img from '../assets/e2.png';
-import e3Img from '../assets/e3.png';
 import Footer from './Footer';
 import Nav from './Nav';
 import { useState, useEffect } from 'react';
-import { productsData } from './Catalogue';
 
 export default function Home() {
-  const [products, setProducts] = useState(productsData);
+  const [products, setProducts] = useState([]);
+  const [collections, setCollections] = useState([]);
+  const [banners, setBanners] = useState([]);
 
   useEffect(() => {
+    const apiHost = window.location.hostname;
+
     const fetchProducts = async () => {
       try {
-        const apiHost = window.location.hostname;
         const res = await fetch(`http://${apiHost}:5005/api/products`);
         if (res.ok) {
           const data = await res.json();
@@ -48,7 +29,9 @@ export default function Home() {
                 image: p.imageIds && p.imageIds.length > 0 ? `http://${apiHost}:5005/api/admin/images/${p.imageIds[0]}` : null,
                 badgeLeft: p.customBadge || "",
                 badgeRight: discPercent > 0 ? `${discPercent}% OFF` : "",
-                collection: p.collectionName || ""
+                collection: p.collectionName || "",
+                isFeatured: p.isFeatured || false,
+                isNewArrival: p.isNewArrival || false
               };
             });
             setProducts(mapped);
@@ -58,7 +41,38 @@ export default function Home() {
         console.error("Failed to fetch live products on Home:", err);
       }
     };
+
+    const fetchCollections = async () => {
+      try {
+        const res = await fetch(`http://${apiHost}:5005/api/collections`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data) {
+            setCollections(data);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch live collections on Home:", err);
+      }
+    };
+
+    const fetchBanners = async () => {
+      try {
+        const res = await fetch(`http://${apiHost}:5005/api/banners`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data) {
+            setBanners(data);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch live banners on Home:", err);
+      }
+    };
+
     fetchProducts();
+    fetchCollections();
+    fetchBanners();
   }, []);
   return (
     <div className="min-h-screen bg-black text-white flex flex-col font-sans select-none">
@@ -68,9 +82,11 @@ export default function Home() {
       {/* Hero Section */}
       <main 
         className="flex-grow w-full relative bg-cover bg-center flex items-center min-h-[calc(100vh-84px)]"
-        style={{ 
-          backgroundImage: `url(${h1Img})`,
-        }}
+        style={
+          banners.find(b => b.bannerType === 'Homepage Banner')
+            ? { backgroundImage: `url(${banners.find(b => b.bannerType === 'Homepage Banner').imageUrl})` }
+            : { background: 'linear-gradient(135deg, #120e0a 0%, #1a1510 50%, #0a0806 100%)' }
+        }
       >
         {/* Subtle Dark Overlay to balance visibility */}
         <div className="absolute inset-0 bg-black/40 z-0 pointer-events-none"></div>
@@ -85,9 +101,15 @@ export default function Home() {
 
             {/* Main Header */}
             <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl font-medium text-white leading-tight mb-6">
-              Shine Like <span className="text-gold-400 font-serif">Royalty,</span>
-              <br className="hidden sm:inline" />
-              Without the Heavy Price.
+              {banners.find(b => b.bannerType === 'Homepage Banner') ? (
+                banners.find(b => b.bannerType === 'Homepage Banner').name
+              ) : (
+                <>
+                  Shine Like <span className="text-gold-400 font-serif">Royalty,</span>
+                  <br className="hidden sm:inline" />
+                  Without the Heavy Price.
+                </>
+              )}
             </h1>
 
             {/* Description */}
@@ -99,7 +121,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 mb-16">
               {/* Explore Collection Button */}
               <a 
-                href="#collections" 
+                href={banners.find(b => b.bannerType === 'Homepage Banner')?.linkUrl || "#collections"} 
                 className="inline-flex items-center justify-center bg-white text-black font-semibold px-8 py-3.5 rounded-lg hover:bg-gold-400 hover:text-black transition-all duration-300 shadow-xl group text-sm md:text-base"
               >
                 Explore Collection
@@ -228,98 +250,51 @@ export default function Home() {
 
           {/* Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Card 1 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="aspect-[4/5] w-full overflow-hidden">
-                <img 
-                  src={hb1Img} 
-                  alt="Bridal Collection" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  Collection
-                </span>
-                <h3 className="font-serif text-lg md:text-xl font-bold text-gray-900 mb-2">
-                  Bridal Collection
-                </h3>
-                <p className="text-gray-600 text-sm mb-6 flex-grow font-light font-sans">
-                  premium imitation jewellery for your special day
-                </p>
-                <div>
-                  <a 
-                    href="#catalogue?collection=Bridal%20Collection" 
-                    className="inline-flex items-center text-gray-900 hover:text-gold-600 font-semibold text-xs uppercase tracking-wider transition-all duration-300 group"
-                  >
-                    explore 
-                    <span className="ml-1 transform group-hover:translate-x-0.5 transition-transform duration-300">&gt;</span>
-                  </a>
+            {collections.map(col => (
+              <div key={col.id} className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
+                <div className="aspect-[4/5] w-full overflow-hidden relative bg-neutral-100 flex items-center justify-center">
+                  {col.imageUrl ? (
+                    <img 
+                      src={col.imageUrl} 
+                      alt={col.name} 
+                      className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
+                    />
+                  ) : (
+                    <span className="text-xs text-neutral-400 uppercase tracking-widest font-light">No Image</span>
+                  )}
+                  {col.badge && (
+                    <span className="absolute top-4 right-4 z-10 bg-gold-400 text-black font-semibold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm font-sans">
+                      {col.badge}
+                    </span>
+                  )}
+                </div>
+                <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
+                  <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
+                    Collection
+                  </span>
+                  <h3 className="font-serif text-lg md:text-xl font-bold text-gray-900 mb-2 truncate">
+                    {col.name}
+                  </h3>
+                  <p className="text-gray-600 text-sm mb-6 flex-grow font-light font-sans line-clamp-2">
+                    {col.description || 'Curated premium ornaments.'}
+                  </p>
+                  <div>
+                    <a 
+                      href={`#catalogue?collection=${encodeURIComponent(col.name)}`} 
+                      className="inline-flex items-center text-gray-900 hover:text-gold-600 font-semibold text-xs uppercase tracking-wider transition-all duration-300 group"
+                    >
+                      explore 
+                      <span className="ml-1 transform group-hover:translate-x-0.5 transition-transform duration-300">&gt;</span>
+                    </a>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Card 2 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="aspect-[4/5] w-full overflow-hidden">
-                <img 
-                  src={hb2Img} 
-                  alt="Wedding Collection" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
+            ))}
+            {collections.length === 0 && (
+              <div className="col-span-full text-center py-12 text-neutral-500 font-light text-sm bg-neutral-50 border border-gray-100 rounded-2xl">
+                No collections available.
               </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  Collection
-                </span>
-                <h3 className="font-serif text-lg md:text-xl font-bold text-gray-900 mb-2">
-                  Wedding Collection
-                </h3>
-                <p className="text-gray-600 text-sm mb-6 flex-grow font-light font-sans">
-                  elegant imitation jewellery to make you shine
-                </p>
-                <div>
-                  <a 
-                    href="#catalogue?collection=Wedding%20Collection" 
-                    className="inline-flex items-center text-gray-900 hover:text-gold-600 font-semibold text-xs uppercase tracking-wider transition-all duration-300 group"
-                  >
-                    explore 
-                    <span className="ml-1 transform group-hover:translate-x-0.5 transition-transform duration-300">&gt;</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="aspect-[4/5] w-full overflow-hidden">
-                <img 
-                  src={mImg} 
-                  alt="Traditional Collection" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  Collection
-                </span>
-                <h3 className="font-serif text-lg md:text-xl font-bold text-gray-900 mb-2">
-                  Traditional Collection
-                </h3>
-                <p className="text-gray-600 text-sm mb-6 flex-grow font-light font-sans">
-                  classic imitation jewellery for every occasion
-                </p>
-                <div>
-                  <a 
-                    href="#catalogue?collection=Traditional%20Collection" 
-                    className="inline-flex items-center text-gray-900 hover:text-gold-600 font-semibold text-xs uppercase tracking-wider transition-all duration-300 group"
-                  >
-                    explore 
-                    <span className="ml-1 transform group-hover:translate-x-0.5 transition-transform duration-300">&gt;</span>
-                  </a>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </section>
@@ -339,7 +314,12 @@ export default function Home() {
 
           {/* Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {products.slice(0, 6).map(product => (
+            {products.filter(p => p.isFeatured).length === 0 && (
+              <div className="col-span-full text-center py-12 text-neutral-500 font-light text-sm bg-neutral-50 border border-gray-100 rounded-2xl">
+                No featured products yet. Mark products as featured in the Admin Dashboard.
+              </div>
+            )}
+            {products.filter(p => p.isFeatured).map(product => (
               <div key={product.id} className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
                 <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
                   {product.badgeLeft && (
@@ -438,7 +418,12 @@ export default function Home() {
 
           {/* Product Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-            {products.slice(6, 15).map(product => (
+            {products.filter(p => p.isNewArrival).length === 0 && (
+              <div className="col-span-full text-center py-12 text-neutral-500 font-light text-sm bg-neutral-50 border border-gray-100 rounded-2xl">
+                No new arrivals yet. Mark products as new arrivals in the Admin Dashboard.
+              </div>
+            )}
+            {products.filter(p => p.isNewArrival).map(product => (
               <div key={product.id} className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
                 <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
                   {product.badgeLeft && (
@@ -510,81 +495,36 @@ export default function Home() {
           </div>
 
           {/* Banner Offers grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            {/* Left Big Offer */}
-            <div className="relative overflow-hidden rounded-2xl aspect-[4/3] md:aspect-auto md:h-[480px] group">
-              <div 
-                className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                style={{ backgroundImage: `url(${e1Img})` }}
-              />
-              <div className="absolute inset-0 bg-black/50 transition-opacity duration-300 group-hover:bg-black/40" />
-              <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8 z-10 text-left">
-                <span className="bg-red-600 text-white font-bold text-xs uppercase px-3 py-1.5 rounded tracking-wider w-max mb-4">
-                  25% OFF
-                </span>
-                <h3 className="font-serif text-3xl font-semibold text-white mb-3">
-                  Bridal Season Sale
-                </h3>
-                <a 
-                  href="#offers" 
-                  className="text-white font-medium text-xs flex items-center gap-1 group/btn hover:text-gold-400 transition-colors tracking-wider"
-                >
-                  shop Now
-                  <span className="transform group-hover/btn:translate-x-0.5 transition-transform duration-300">→</span>
-                </a>
-              </div>
-            </div>
-
-            {/* Right Stacked Offers */}
-            <div className="flex flex-col gap-6">
-              {/* Right Top Offer */}
-              <div className="relative overflow-hidden rounded-2xl h-[200px] sm:h-[228px] group">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {banners.filter(b => b.bannerType !== "Homepage Banner").map(banner => (
+              <div key={banner.id} className="relative overflow-hidden rounded-2xl h-[240px] group">
                 <div 
                   className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                  style={{ backgroundImage: `url(${e2Img})` }}
+                  style={{ backgroundImage: `url(${banner.imageUrl})` }}
                 />
                 <div className="absolute inset-0 bg-black/55 transition-opacity duration-300 group-hover:bg-black/45" />
-                <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 z-10 text-left">
+                <div className="absolute inset-0 flex flex-col justify-end p-6 z-10 text-left">
                   <span className="bg-red-600 text-white font-bold text-[10px] uppercase px-2.5 py-1 rounded tracking-wider w-max mb-3">
-                    20% OFF
+                    {banner.bannerType}
                   </span>
                   <h3 className="font-serif text-xl font-semibold text-white mb-2">
-                    Festive Diwali Offer
+                    {banner.name}
                   </h3>
                   <a 
-                    href="#offers" 
+                    href={banner.linkUrl || "#"} 
                     className="text-white font-medium text-xs flex items-center gap-1 group/btn hover:text-gold-400 transition-colors tracking-wider"
                   >
-                    shop Now
+                    explore Now
                     <span className="transform group-hover/btn:translate-x-0.5 transition-transform duration-300">→</span>
                   </a>
                 </div>
               </div>
-
-              {/* Right Bottom Offer */}
-              <div className="relative overflow-hidden rounded-2xl h-[200px] sm:h-[228px] group">
-                <div 
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                  style={{ backgroundImage: `url(${e3Img})` }}
-                />
-                <div className="absolute inset-0 bg-black/55 transition-opacity duration-300 group-hover:bg-black/45" />
-                <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-6 z-10 text-left">
-                  <span className="bg-red-600 text-white font-bold text-[10px] uppercase px-2.5 py-1 rounded tracking-wider w-max mb-3">
-                    15% OFF
-                  </span>
-                  <h3 className="font-serif text-xl font-semibold text-white mb-2">
-                    New Arrival Flash Sale
-                  </h3>
-                  <a 
-                    href="#offers" 
-                    className="text-white font-medium text-xs flex items-center gap-1 group/btn hover:text-gold-400 transition-colors tracking-wider"
-                  >
-                    shop Now
-                    <span className="transform group-hover/btn:translate-x-0.5 transition-transform duration-300">→</span>
-                  </a>
-                </div>
+            ))}
+            {banners.filter(b => b.bannerType !== "Homepage Banner").length === 0 && (
+              <div className="col-span-full text-center py-8 text-neutral-500 font-light text-sm bg-neutral-50 border border-gray-100 rounded-2xl">
+                No active promotional offers.
               </div>
-            </div>
+            )}
           </div>
 
           {/* Centered CTA button */}

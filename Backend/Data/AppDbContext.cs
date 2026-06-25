@@ -19,6 +19,7 @@ namespace Backend.Data
         public DbSet<OfferProduct> OfferProducts { get; set; } = null!;
         public DbSet<Banner> Banners { get; set; } = null!;
         public DbSet<Inquiry> Inquiries { get; set; } = null!;
+        public DbSet<GalleryItem> GalleryItems { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
