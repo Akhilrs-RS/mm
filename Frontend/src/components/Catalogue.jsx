@@ -70,7 +70,7 @@ export const productsData = [
   {
     id: 5,
     title: "Celestial Earings",
-    category: "Earnings", // Matches category spelling in screenshot
+    category: "Earrings", // Matches category spelling in screenshot
     price: 320,
     originalPrice: 400,
     image: ca5Img,
@@ -196,12 +196,15 @@ const BACKEND_URL = `http://${apiHost}:5005`;
 export default function Catalogue() {
   const [products, setProducts] = useState(productsData);
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("Select");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [collectionFilter, setCollectionFilter] = useState(() => {
     const hash = window.location.hash;
     const match = hash.match(/[?&]collection=([^&]+)/);
     return match ? decodeURIComponent(match[1]) : "All";
   });
+  const [categories, setCategories] = useState([]);
+  const [collections, setCollections] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -209,7 +212,7 @@ export default function Catalogue() {
         const res = await fetch(`${BACKEND_URL}/api/products`);
         if (res.ok) {
           const data = await res.json();
-          if (data && data.length > 0) {
+          if (data) {
             const mapped = data.map(p => {
               const discPercent = p.discount || 0;
               const originalPrice = discPercent > 0 ? Number(p.price) : null;
@@ -221,7 +224,7 @@ export default function Catalogue() {
                 price: sellingPrice,
                 originalPrice: originalPrice,
                 image: p.imageIds && p.imageIds.length > 0 ? `${BACKEND_URL}/api/admin/images/${p.imageIds[0]}` : null,
-                badgeLeft: p.isFeatured ? "Featured" : "",
+                badgeLeft: p.customBadge || "",
                 badgeRight: discPercent > 0 ? `${discPercent}% OFF` : "",
                 collection: p.collectionName || ""
               };
@@ -233,7 +236,31 @@ export default function Catalogue() {
         console.error("Failed to fetch live products from backend:", err);
       }
     };
+
+    const fetchFilters = async () => {
+      try {
+        const catRes = await fetch(`${BACKEND_URL}/api/categories`);
+        if (catRes.ok) {
+          const catData = await catRes.json();
+          setCategories(catData);
+        }
+      } catch (err) {
+        console.error("Failed to fetch categories:", err);
+      }
+
+      try {
+        const colRes = await fetch(`${BACKEND_URL}/api/collections`);
+        if (colRes.ok) {
+          const colData = await colRes.json();
+          setCollections(colData);
+        }
+      } catch (err) {
+        console.error("Failed to fetch collections:", err);
+      }
+    };
+
     fetchProducts();
+    fetchFilters();
   }, []);
 
   useEffect(() => {
@@ -255,16 +282,59 @@ export default function Catalogue() {
     }
   };
 
-  // Filter products based on search term, category, and collection
+  // Dynamic categories list, with fallback to unique categories in products when offline/empty
+  const displayCategories = categories.length > 0
+    ? categories.map(cat => cat.name)
+    : Array.from(new Set(products.map(p => p.category))).filter(Boolean).reduce((acc, cat) => {
+        if (!acc.some(c => c.toLowerCase() === cat.toLowerCase())) {
+          acc.push(cat);
+        }
+        return acc;
+      }, []);
+
+  // Dynamic collections list, with fallback to unique collections in products when offline/empty
+  const displayCollections = collections.length > 0
+    ? collections.map(col => col.name)
+    : Array.from(new Set(products.map(p => p.collection))).filter(Boolean).reduce((acc, col) => {
+        if (!acc.some(c => c.toLowerCase() === col.toLowerCase())) {
+          acc.push(col);
+        }
+        return acc;
+      }, []);
+
+  // Extract custom badges found dynamically on products fetched from database
+  const displayBadges = Array.from(
+    new Set(products.map(p => p.badgeLeft).filter(Boolean))
+  ).reduce((acc, badge) => {
+    if (!acc.some(b => b.toLowerCase() === badge.toLowerCase())) {
+      acc.push(badge);
+    }
+    return acc;
+  }, []);
+
+  // Filter products based on search term, category, collection, and custom badge options
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           product.category.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesCategory = categoryFilter === "All" || product.category.toLowerCase() === categoryFilter.toLowerCase();
     
-    const matchesCollection = collectionFilter === "All" || product.collection === collectionFilter;
+    const matchesCollection = collectionFilter === "All" || (product.collection && product.collection.toLowerCase() === collectionFilter.toLowerCase());
 
-    return matchesSearch && matchesCategory && matchesCollection;
+    const isCustomBadge = displayBadges.some(b => b.toLowerCase() === sortBy.toLowerCase());
+    const matchesCustom = !isCustomBadge || (product.badgeLeft && product.badgeLeft.toLowerCase() === sortBy.toLowerCase());
+
+    return matchesSearch && matchesCategory && matchesCollection && matchesCustom;
+  });
+
+  // Sort the filtered products
+  const sortedProducts = [...filteredProducts].sort((a, b) => {
+    if (sortBy === "lowToHigh") {
+      return a.price - b.price;
+    } else if (sortBy === "highToLow") {
+      return b.price - a.price;
+    }
+    return 0;
   });
 
   return (
@@ -321,14 +391,9 @@ export default function Catalogue() {
                 className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-gold-500 focus:bg-white transition-colors"
               >
                 <option value="All">All Categories</option>
-                <option value="BANGLES">Bangles</option>
-                <option value="Earnings">Earnings</option>
-                <option value="Rings">Rings</option>
-                <option value="Anklet">Anklets</option>
-                <option value="Chain">Chains</option>
-                <option value="Bridal Sets">Bridal Sets</option>
-                <option value="Traditional Jewellery">Traditional</option>
-                <option value="Party Wear Jewellery">Party Wear</option>
+                {displayCategories.map(catName => (
+                  <option key={catName} value={catName}>{catName}</option>
+                ))}
               </select>
 
               <select 
@@ -337,19 +402,22 @@ export default function Catalogue() {
                 className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-gold-500 focus:bg-white transition-colors"
               >
                 <option value="All">All Collections</option>
-                <option value="Bridal Collection">Bridal Collection</option>
-                <option value="Wedding Collection">Wedding Collection</option>
-                <option value="Traditional Collection">Traditional Collection</option>
-                <option value="Modern Collection">Modern Collection</option>
-                <option value="Party Wear Collection">Party Wear Collection</option>
-                <option value="Festival Collections">Festival Collections</option>
+                {displayCollections.map(colName => (
+                  <option key={colName} value={colName}>{colName}</option>
+                ))}
               </select>
 
-              <select className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-gold-500 focus:bg-white transition-colors">
-                <option>Select</option>
-                <option>Price: Low to High</option>
-                <option>Price: High to Low</option>
-                <option>Newest Arrivals</option>
+              <select 
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-700 focus:outline-none focus:border-gold-500 focus:bg-white transition-colors"
+              >
+                <option value="Select">Select</option>
+                <option value="lowToHigh">Price: Low to High</option>
+                <option value="highToLow">Price: High to Low</option>
+                {displayBadges.map(badgeName => (
+                  <option key={badgeName} value={badgeName}>{badgeName}</option>
+                ))}
               </select>
             </div>
           </div>
@@ -359,13 +427,13 @@ export default function Catalogue() {
       {/* Catalogue Cards Grid */}
       <section className="bg-white py-16 px-6 md:px-12 lg:px-24 flex-grow">
         <div className="container mx-auto">
-          {filteredProducts.length === 0 ? (
+          {sortedProducts.length === 0 ? (
             <div className="text-center py-20">
               <p className="text-gray-500 text-lg">No products found matching your search criteria.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-              {filteredProducts.map((product) => (
+              {sortedProducts.map((product) => (
                 <div 
                   key={product.id} 
                   className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col"

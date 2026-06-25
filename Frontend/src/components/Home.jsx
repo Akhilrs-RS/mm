@@ -34,7 +34,7 @@ export default function Home() {
         const res = await fetch(`http://${apiHost}:5005/api/products`);
         if (res.ok) {
           const data = await res.json();
-          if (data && data.length > 0) {
+          if (data) {
             const mapped = data.map(p => {
               const discPercent = p.discount || 0;
               const originalPrice = discPercent > 0 ? Number(p.price) : null;
@@ -46,7 +46,7 @@ export default function Home() {
                 price: sellingPrice,
                 originalPrice: originalPrice,
                 image: p.imageIds && p.imageIds.length > 0 ? `http://${apiHost}:5005/api/admin/images/${p.imageIds[0]}` : null,
-                badgeLeft: p.isFeatured ? "Featured" : "",
+                badgeLeft: p.customBadge || "",
                 badgeRight: discPercent > 0 ? `${discPercent}% OFF` : "",
                 collection: p.collectionName || ""
               };

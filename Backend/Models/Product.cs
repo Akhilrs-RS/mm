@@ -28,6 +28,8 @@ namespace Backend.Models
 
         public bool IsFeatured { get; set; } = false;
 
+        public string CustomBadge { get; set; } = string.Empty;
+
         public int ViewsCount { get; set; } = 0;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

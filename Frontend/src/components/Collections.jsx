@@ -1,62 +1,38 @@
+import { useState, useEffect } from 'react';
 import Footer from './Footer';
 import Nav from './Nav';
 
 // Import assets
 import c1Img from '../assets/c1.png';
-import co1Img from '../assets/co1.png';
-import co2Img from '../assets/co2.png';
-import co3Img from '../assets/co3.png';
-import co4Img from '../assets/co4.png';
-import co5Img from '../assets/co5.png';
-import co6Img from '../assets/co6.png';
 
-// Collection Card Data
-const collectionsData = [
-  {
-    id: 1,
-    title: "Bridal Collection",
-    description: "Exquisite bridal jewellery sets that make your special day unforgettable. Premium kundan.",
-    image: co1Img,
-    badge: "Up to 25% off"
-  },
-  {
-    id: 2,
-    title: "Wedding Collection",
-    description: "Exquisite bridal jewellery sets that make your special day unforgettable. Premium kundan.",
-    image: co2Img,
-    badge: "Flat ₹ 500"
-  },
-  {
-    id: 3,
-    title: "Traditional Collection",
-    description: "Exquisite bridal jewellery sets that make your special day unforgettable. Premium kundan.",
-    image: co3Img,
-    badge: "Festival special 299 off"
-  },
-  {
-    id: 4,
-    title: "Modern Collection",
-    description: "Exquisite bridal jewellery sets that make your special day unforgettable. Premium kundan.",
-    image: co4Img,
-    badge: "Up to 25% off"
-  },
-  {
-    id: 5,
-    title: "Party Wear Collection",
-    description: "Exquisite bridal jewellery sets that make your special day unforgettable. Premium kundan.",
-    image: co5Img,
-    badge: "Up to 25% off"
-  },
-  {
-    id: 6,
-    title: "Festival Collections",
-    description: "Exquisite bridal jewellery sets that make your special day unforgettable. Premium kundan.",
-    image: co6Img,
-    badge: "Up to 25% off"
-  }
-];
+const apiHost = window.location.hostname;
+const BACKEND_URL = `http://${apiHost}:5005`;
 
 export default function Collections() {
+  const [collections, setCollections] = useState([]);
+
+  useEffect(() => {
+    const fetchCollections = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/collections`);
+        if (res.ok) {
+          const data = await res.json();
+          const mapped = data.map(c => ({
+            id: c.id,
+            title: c.name,
+            description: c.description || 'No description provided.',
+            image: c.imageId ? `${BACKEND_URL}/api/admin/images/${c.imageId}` : null,
+            badge: c.badge || ''
+          }));
+          setCollections(mapped);
+        }
+      } catch (err) {
+        console.error("Failed to fetch collections:", err);
+      }
+    };
+    fetchCollections();
+  }, []);
+
   return (
     <div className="min-h-screen bg-white text-black flex flex-col font-sans select-none">
       {/* Navigation Header */}
@@ -86,18 +62,24 @@ export default function Collections() {
       <section className="bg-white py-20 px-6 md:px-12 lg:px-24 flex-grow">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {collectionsData.map((col) => (
+            {collections.map((col) => (
               <div 
                 key={col.id} 
                 className="rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col"
               >
                 {/* Image Section */}
                 <div className="aspect-square w-full overflow-hidden">
-                  <img 
-                    src={col.image} 
-                    alt={col.title} 
-                    className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                  />
+                  {col.image ? (
+                    <img 
+                      src={col.image} 
+                      alt={col.title} 
+                      className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-sm font-sans font-light">
+                      No Image Available
+                    </div>
+                  )}
                 </div>
 
                 {/* Dark Bronze Content Section */}
@@ -119,7 +101,7 @@ export default function Collections() {
                   {/* View Collection Link */}
                   <div className="mt-auto">
                     <a 
-                      href={`#collections/${col.id}`} 
+                      href={`#catalogue?collection=${encodeURIComponent(col.title)}`} 
                       className="inline-flex items-center text-white hover:text-gold-400 text-xs md:text-sm font-semibold transition-colors duration-300 group"
                     >
                       View Collection

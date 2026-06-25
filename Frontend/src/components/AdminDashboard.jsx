@@ -67,6 +67,7 @@ export default function AdminDashboard({ onLogout }) {
     categoryId: '',
     collectionId: '',
     isFeatured: false,
+    customBadge: '',
     imageIds: []
   });
 
@@ -343,6 +344,7 @@ export default function AdminDashboard({ onLogout }) {
       categoryId: categories[0]?.id || '',
       collectionId: '',
       isFeatured: false,
+      customBadge: '',
       imageIds: []
     });
     setShowProductModal(true);
@@ -358,6 +360,7 @@ export default function AdminDashboard({ onLogout }) {
       categoryId: prod.categoryId,
       collectionId: prod.collectionId !== 'None' ? prod.collectionId || '' : '',
       isFeatured: prod.isFeatured,
+      customBadge: prod.customBadge || '',
       imageIds: prod.imageIds || []
     });
     setShowProductModal(true);
@@ -918,7 +921,7 @@ export default function AdminDashboard({ onLogout }) {
                         <th className="py-3 px-2 font-medium hidden md:table-cell">Collection</th>
                         <th className="py-3 px-2 font-medium">Price</th>
                         <th className="py-3 px-2 font-medium hidden sm:table-cell">Discount</th>
-                        <th className="py-3 px-2 text-center font-medium hidden lg:table-cell">Featured</th>
+                        <th className="py-3 px-2 text-center font-medium hidden md:table-cell">Badge</th>
                         <th className="py-3 px-2 text-center font-medium">Actions</th>
                       </tr>
                     </thead>
@@ -939,11 +942,11 @@ export default function AdminDashboard({ onLogout }) {
                           <td className="py-2 px-2 text-neutral-450 text-xs hidden md:table-cell">{prod.collectionName}</td>
                           <td className="py-2 px-2 font-semibold text-gold-400 text-xs">₹{prod.price}</td>
                           <td className="py-2 px-2 text-emerald-400 text-xs hidden sm:table-cell">{prod.discount}%</td>
-                          <td className="py-2 px-2 text-center text-xs hidden lg:table-cell">
-                            {prod.isFeatured ? (
-                              <span className="bg-gold-500/10 text-gold-400 text-[9px] font-bold uppercase tracking-wider py-0.5 px-2 rounded-full border border-gold-400/20">Yes</span>
+                          <td className="py-2 px-2 text-center text-xs hidden md:table-cell">
+                            {prod.customBadge ? (
+                              <span className="bg-[#ab8d6d]/20 text-gold-300 text-[9px] font-bold uppercase tracking-wider py-0.5 px-2 rounded-full border border-[#ab8d6d]/30">{prod.customBadge}</span>
                             ) : (
-                              <span className="text-neutral-600 text-xs">No</span>
+                              <span className="text-neutral-600 text-xs">-</span>
                             )}
                           </td>
                           <td className="py-2 px-2">
@@ -1466,19 +1469,18 @@ export default function AdminDashboard({ onLogout }) {
                   )}
                 </div>
 
-                {/* Featured Checkbox */}
-                <div className="flex items-center gap-2.5 py-1">
+                {/* Custom Badge */}
+                <div className="space-y-1.5">
+                  <label className="text-xs uppercase tracking-wider text-neutral-400 font-light">Custom Badge</label>
                   <input
-                    type="checkbox"
-                    id="isFeaturedCheck"
-                    checked={prodForm.isFeatured}
-                    onChange={(e) => setProdForm({ ...prodForm, isFeatured: e.target.checked })}
-                    className="w-4 h-4 text-gold-400 accent-[#aa7c11] focus:ring-0 focus:ring-offset-0 rounded border-neutral-800"
+                    type="text"
+                    placeholder="e.g. Best Seller, Hot Deal, Limited Edition"
+                    value={prodForm.customBadge}
+                    onChange={(e) => setProdForm({ ...prodForm, customBadge: e.target.value })}
+                    className="w-full bg-neutral-950 border border-white/5 rounded-lg px-4 py-2.5 text-xs text-white focus:outline-none focus:border-gold-500 transition-colors"
                   />
-                  <label htmlFor="isFeaturedCheck" className="text-xs uppercase tracking-wider text-neutral-300 font-medium cursor-pointer">
-                    Mark as Featured Product
-                  </label>
                 </div>
+
 
                 <div className="flex items-center justify-end gap-4 border-t border-white/5 pt-4">
                   <button
