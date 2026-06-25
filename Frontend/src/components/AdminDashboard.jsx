@@ -909,45 +909,45 @@ export default function AdminDashboard({ onLogout }) {
               {/* Products Table Card */}
               <div className="bg-neutral-900 border border-white/5 rounded-2xl overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left border-collapse text-sm">
+                  <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className="bg-black/40 border-b border-white/5 text-neutral-400 text-xs uppercase tracking-wider">
-                        <th className="py-4 px-6 font-medium">Image</th>
-                        <th className="py-4 px-6 font-medium">Product Name</th>
-                        <th className="py-4 px-6 font-medium">Category</th>
-                        <th className="py-4 px-6 font-medium">Collection</th>
-                        <th className="py-4 px-6 font-medium">Price</th>
-                        <th className="py-4 px-6 font-medium">Discount</th>
-                        <th className="py-4 px-6 font-medium text-center">Featured</th>
-                        <th className="py-4 px-6 text-center font-medium">Actions</th>
+                      <tr className="bg-black/40 border-b border-white/5 text-neutral-400 text-[10px] md:text-xs uppercase tracking-wider">
+                        <th className="py-3 px-2 font-medium">Image</th>
+                        <th className="py-3 px-2 font-medium">Product Name</th>
+                        <th className="py-3 px-2 font-medium hidden sm:table-cell">Category</th>
+                        <th className="py-3 px-2 font-medium hidden md:table-cell">Collection</th>
+                        <th className="py-3 px-2 font-medium">Price</th>
+                        <th className="py-3 px-2 font-medium hidden sm:table-cell">Discount</th>
+                        <th className="py-3 px-2 text-center font-medium hidden lg:table-cell">Featured</th>
+                        <th className="py-3 px-2 text-center font-medium">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
                       {products.map(prod => (
                         <tr key={prod.id} className="hover:bg-white/[0.02] transition-colors">
-                          <td className="py-4 px-6">
+                          <td className="py-2 px-2">
                             {prod.imageUrls && prod.imageUrls.length > 0 ? (
-                              <img src={prod.imageUrls[0]} alt="" className="w-12 h-12 object-cover rounded-lg bg-neutral-950 border border-white/10" />
+                              <img src={prod.imageUrls[0]} alt="" className="w-8 h-8 object-cover rounded-lg bg-neutral-950 border border-white/10" />
                             ) : (
-                              <div className="w-12 h-12 rounded-lg bg-neutral-950 flex items-center justify-center text-[10px] text-neutral-600 border border-white/10">No Image</div>
+                              <div className="w-8 h-8 rounded-lg bg-neutral-950 flex items-center justify-center text-[9px] text-neutral-600 border border-white/10">No Image</div>
                             )}
                           </td>
-                          <td className="py-4 px-6 font-medium text-white max-w-[200px] truncate" title={prod.name}>
+                          <td className="py-2 px-2 font-medium text-white max-w-[100px] sm:max-w-[150px] truncate" title={prod.name}>
                             {prod.name}
                           </td>
-                          <td className="py-4 px-6 text-neutral-300">{prod.categoryName}</td>
-                          <td className="py-4 px-6 text-neutral-450">{prod.collectionName}</td>
-                          <td className="py-4 px-6 font-semibold text-gold-400">₹{prod.price}</td>
-                          <td className="py-4 px-6 text-emerald-400">{prod.discount}%</td>
-                          <td className="py-4 px-6 text-center">
+                          <td className="py-2 px-2 text-neutral-300 text-xs hidden sm:table-cell">{prod.categoryName}</td>
+                          <td className="py-2 px-2 text-neutral-450 text-xs hidden md:table-cell">{prod.collectionName}</td>
+                          <td className="py-2 px-2 font-semibold text-gold-400 text-xs">₹{prod.price}</td>
+                          <td className="py-2 px-2 text-emerald-400 text-xs hidden sm:table-cell">{prod.discount}%</td>
+                          <td className="py-2 px-2 text-center text-xs hidden lg:table-cell">
                             {prod.isFeatured ? (
-                              <span className="bg-gold-500/10 text-gold-400 text-[10px] font-bold uppercase tracking-wider py-1 px-2.5 rounded-full border border-gold-400/20">Yes</span>
+                              <span className="bg-gold-500/10 text-gold-400 text-[9px] font-bold uppercase tracking-wider py-0.5 px-2 rounded-full border border-gold-400/20">Yes</span>
                             ) : (
                               <span className="text-neutral-600 text-xs">No</span>
                             )}
                           </td>
-                          <td className="py-4 px-6">
-                            <div className="flex items-center justify-center gap-3">
+                          <td className="py-2 px-2">
+                            <div className="flex items-center justify-center gap-2">
                               <button
                                 onClick={() => openEditProduct(prod)}
                                 className="text-xs uppercase tracking-wider text-neutral-400 hover:text-white transition-colors cursor-pointer"

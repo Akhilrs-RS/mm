@@ -21,9 +21,45 @@ import e2Img from '../assets/e2.png';
 import e3Img from '../assets/e3.png';
 import Footer from './Footer';
 import Nav from './Nav';
-
+import { useState, useEffect } from 'react';
+import { productsData } from './Catalogue';
 
 export default function Home() {
+  const [products, setProducts] = useState(productsData);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const apiHost = window.location.hostname;
+        const res = await fetch(`http://${apiHost}:5005/api/products`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            const mapped = data.map(p => {
+              const discPercent = p.discount || 0;
+              const originalPrice = discPercent > 0 ? Number(p.price) : null;
+              const sellingPrice = discPercent > 0 ? Number(p.price) * (1 - discPercent / 100) : Number(p.price);
+              return {
+                id: p.id,
+                title: p.name,
+                category: p.categoryName,
+                price: sellingPrice,
+                originalPrice: originalPrice,
+                image: p.imageIds && p.imageIds.length > 0 ? `http://${apiHost}:5005/api/admin/images/${p.imageIds[0]}` : null,
+                badgeLeft: p.isFeatured ? "Featured" : "",
+                badgeRight: discPercent > 0 ? `${discPercent}% OFF` : "",
+                collection: p.collectionName || ""
+              };
+            });
+            setProducts(mapped);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch live products on Home:", err);
+      }
+    };
+    fetchProducts();
+  }, []);
   return (
     <div className="min-h-screen bg-black text-white flex flex-col font-sans select-none">
       {/* Navigation Header */}
@@ -303,335 +339,75 @@ export default function Home() {
 
           {/* Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Card 1 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
-                <span className="absolute top-4 left-4 z-10 bg-black text-white font-semibold text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-sm font-sans">
-                  BEST SELLER
-                </span>
-                <span className="absolute top-4 right-4 z-10 bg-[#ab8d6d]/90 text-white font-medium text-[10px] px-2.5 py-1 rounded tracking-wider font-sans">
-                  10% OFF
-                </span>
-                <img 
-                  src={ca1Img} 
-                  alt="Heritage Gold covering Bangles Set" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  BANGLES
-                </span>
-                <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
-                  Heritage Gold covering Bangles Set
-                </h3>
-                <div className="flex justify-between items-center mt-auto">
-                  <div className="flex items-baseline">
-                    <span className="text-gray-400 line-through text-xs mr-2 font-sans">
-                      ₹ 1,600
+            {products.slice(0, 6).map(product => (
+              <div key={product.id} className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
+                <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
+                  {product.badgeLeft && (
+                    <span className="absolute top-4 left-4 z-10 bg-black text-white font-semibold text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-sm font-sans">
+                      {product.badgeLeft}
                     </span>
-                    <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
-                      ₹ 1,440
+                  )}
+                  {product.badgeRight && (
+                    <span className="absolute top-4 right-4 z-10 bg-[#ab8d6d]/90 text-white font-medium text-[10px] px-2.5 py-1 rounded tracking-wider font-sans">
+                      {product.badgeRight}
                     </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    </button>
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                    </button>
-                    <a 
-                      href="https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%20Heritage%20Gold%20covering%20Bangles%20Set"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
-                      </svg>
-                    </a>
+                  )}
+                  {product.image ? (
+                    <img 
+                      src={product.image} 
+                      alt={product.title} 
+                      className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-sm font-sans font-light">
+                      No Image
+                    </div>
+                  )}
+                </div>
+                <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
+                  <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
+                    {product.category ? product.category.toUpperCase() : ""}
+                  </span>
+                  <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
+                    {product.title}
+                  </h3>
+                  <div className="flex justify-between items-center mt-auto">
+                    <div className="flex items-baseline">
+                      {product.originalPrice && (
+                        <span className="text-gray-400 line-through text-xs mr-2 font-sans">
+                          ₹ {product.originalPrice.toLocaleString()}
+                        </span>
+                      )}
+                      <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
+                        ₹ {product.price.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                      </button>
+                      <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                        </svg>
+                      </button>
+                      <a 
+                        href={`https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%2520${encodeURIComponent(product.title)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
+                      >
+                        <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
+                        </svg>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Card 2 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
-                <span className="absolute top-4 left-4 z-10 bg-black text-white font-semibold text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-sm font-sans">
-                  BEST SELLER
-                </span>
-                <span className="absolute top-4 right-4 z-10 bg-[#ab8d6d]/90 text-white font-medium text-[10px] px-2.5 py-1 rounded tracking-wider font-sans">
-                  30% OFF
-                </span>
-                <img 
-                  src={ca2Img} 
-                  alt="Stone work Necklace" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  BANGLES
-                </span>
-                <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
-                  Stone work Necklace
-                </h3>
-                <div className="flex justify-between items-center mt-auto">
-                  <div className="flex items-baseline">
-                    <span className="text-gray-400 line-through text-xs mr-2 font-sans">
-                      ₹ 2,600
-                    </span>
-                    <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
-                      ₹ 1,820
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    </button>
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                    </button>
-                    <a 
-                      href="https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%20Stone%20work%20Necklace"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86;  -4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
-                <span className="absolute top-4 left-4 z-10 bg-black text-white font-semibold text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-sm font-sans">
-                  BEST SELLER
-                </span>
-                <span className="absolute top-4 right-4 z-10 bg-[#ab8d6d]/90 text-white font-medium text-[10px] px-2.5 py-1 rounded tracking-wider font-sans">
-                  10% OFF
-                </span>
-                <img 
-                  src={ca3Img} 
-                  alt="Bridal Set" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  BANGLES
-                </span>
-                <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
-                  Bridal Set
-                </h3>
-                <div className="flex justify-between items-center mt-auto">
-                  <div className="flex items-baseline">
-                    <span className="text-gray-400 line-through text-xs mr-2 font-sans">
-                      ₹ 1,600
-                    </span>
-                    <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
-                      ₹ 1,440
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    </button>
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                    </button>
-                    <a 
-                      href="https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%20Bridal%20Set"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 4 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
-                <img 
-                  src={ca4Img} 
-                  alt="Temple Gold covering Necklace Set" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  BANGLES
-                </span>
-                <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
-                  Temple Gold covering Necklace Set
-                </h3>
-                <div className="flex justify-between items-center mt-auto">
-                  <div className="flex items-baseline">
-                    <span className="text-gray-400 line-through text-xs mr-2 font-sans">
-                      ₹ 6,600
-                    </span>
-                    <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
-                      ₹ 5,940
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    </button>
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                    </button>
-                    <a 
-                      href="https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%20Temple%20Gold%20covering%20Necklace%20Set"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 5 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
-                <img 
-                  src={ca5Img} 
-                  alt="Celestial Earings" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  EARNINGS
-                </span>
-                <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
-                  Celestial Earings
-                </h3>
-                <div className="flex justify-between items-center mt-auto">
-                  <div className="flex items-baseline">
-                    <span className="text-gray-400 line-through text-xs mr-2 font-sans">
-                      ₹ 400
-                    </span>
-                    <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
-                      ₹ 320
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    </button>
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                    </button>
-                    <a 
-                      href="https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%20Celestial%20Earings"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 6 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
-                <span className="absolute top-4 left-4 z-10 bg-black text-white font-semibold text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-sm font-sans">
-                  BEST SELLER
-                </span>
-                <span className="absolute top-4 right-4 z-10 bg-[#ab8d6d]/90 text-white font-medium text-[10px] px-2.5 py-1 rounded tracking-wider font-sans">
-                  12% OFF
-                </span>
-                <img 
-                  src={ca6Img} 
-                  alt="Palakka Choker" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  BANGLES
-                </span>
-                <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
-                  Palakka Choker
-                </h3>
-                <div className="flex justify-between items-center mt-auto">
-                  <div className="flex items-baseline">
-                    <span className="text-gray-400 line-through text-xs mr-2 font-sans">
-                      ₹ 900
-                    </span>
-                    <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
-                      ₹ 792
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    </button>
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                    </button>
-                    <a 
-                      href="https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%20Palakka%20Choker"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
@@ -662,467 +438,75 @@ export default function Home() {
 
           {/* Product Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-            {/* Card 1 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
-                <span className="absolute top-4 left-4 z-10 bg-black text-white font-semibold text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-sm font-sans">
-                  HOT DEAL
-                </span>
-                <img 
-                  src={ca7Img} 
-                  alt="Couple Rings" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  RINGS
-                </span>
-                <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
-                  Couple Rings
-                </h3>
-                <div className="flex justify-between items-center mt-auto">
-                  <div className="flex items-baseline">
-                    <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
-                      ₹ 390
+            {products.slice(6, 15).map(product => (
+              <div key={product.id} className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
+                <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
+                  {product.badgeLeft && (
+                    <span className="absolute top-4 left-4 z-10 bg-black text-white font-semibold text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-sm font-sans">
+                      {product.badgeLeft}
                     </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    </button>
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                    </button>
-                    <a 
-                      href="https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%20Couple%20Rings"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
-                      </svg>
-                    </a>
+                  )}
+                  {product.badgeRight && (
+                    <span className="absolute top-4 right-4 z-10 bg-[#ab8d6d]/90 text-white font-medium text-[10px] px-2.5 py-1 rounded tracking-wider font-sans">
+                      {product.badgeRight}
+                    </span>
+                  )}
+                  {product.image ? (
+                    <img 
+                      src={product.image} 
+                      alt={product.title} 
+                      className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-sm font-sans font-light">
+                      No Image
+                    </div>
+                  )}
+                </div>
+                <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
+                  <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
+                    {product.category ? product.category.toUpperCase() : ""}
+                  </span>
+                  <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
+                    {product.title}
+                  </h3>
+                  <div className="flex justify-between items-center mt-auto">
+                    <div className="flex items-baseline">
+                      {product.originalPrice && (
+                        <span className="text-gray-400 line-through text-xs mr-2 font-sans">
+                          ₹ {product.originalPrice.toLocaleString()}
+                        </span>
+                      )}
+                      <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
+                        ₹ {product.price.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                        </svg>
+                      </button>
+                      <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                        </svg>
+                      </button>
+                      <a 
+                        href={`https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%2520${encodeURIComponent(product.title)}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
+                      >
+                        <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.953-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
+                        </svg>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Card 2 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
-                <span className="absolute top-4 left-4 z-10 bg-black text-white font-semibold text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-sm font-sans">
-                  HOT DEAL
-                </span>
-                <img 
-                  src={ca8Img} 
-                  alt="Anklet set" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  ANKLETS
-                </span>
-                <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
-                  Anklet set
-                </h3>
-                <div className="flex justify-between items-center mt-auto">
-                  <div className="flex items-baseline">
-                    <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
-                      ₹ 800
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    </button>
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                    </button>
-                    <a 
-                      href="https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%20Anklet%20set"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
-                <span className="absolute top-4 left-4 z-10 bg-black text-white font-semibold text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-sm font-sans">
-                  HOT DEAL
-                </span>
-                <img 
-                  src={ca9Img} 
-                  alt="Classic Simple Pendant Chain" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  CHAINS
-                </span>
-                <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
-                  Classic Simple Pendant Chain
-                </h3>
-                <div className="flex justify-between items-center mt-auto">
-                  <div className="flex items-baseline">
-                    <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
-                      ₹ 320
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    </button>
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                    </button>
-                    <a 
-                      href="https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%20Classic%20Simple%20Pendant%20Chain"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 4 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
-                <span className="absolute top-4 left-4 z-10 bg-black text-white font-semibold text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-sm font-sans">
-                  HOT DEAL
-                </span>
-                <img 
-                  src={ca10Img} 
-                  alt="Bridal Set with Kamarpatta" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  BRIDAL SETS
-                </span>
-                <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
-                  Bridal Set with Kamarpatta
-                </h3>
-                <div className="flex justify-between items-center mt-auto">
-                  <div className="flex items-baseline">
-                    <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
-                      ₹ 6,125
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    </button>
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                    </button>
-                    <a 
-                      href="https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%20Bridal%20Set%20with%20Kamarpatta"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 5 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
-                <span className="absolute top-4 left-4 z-10 bg-black text-white font-semibold text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-sm font-sans">
-                  HOT DEAL
-                </span>
-                <img 
-                  src={ca11Img} 
-                  alt="Emerald mango design necklace set" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  TRADITIONAL JEWELLERY
-                </span>
-                <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
-                  Emerald mango design necklace set
-                </h3>
-                <div className="flex justify-between items-center mt-auto">
-                  <div className="flex items-baseline">
-                    <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
-                      ₹ 2,725
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    </button>
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                    </button>
-                    <a 
-                      href="https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%20Emerald%20mango%20design%20necklace%20set"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 6 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
-                <span className="absolute top-4 left-4 z-10 bg-black text-white font-semibold text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-sm font-sans">
-                  HOT DEAL
-                </span>
-                <span className="absolute top-4 right-4 z-10 bg-[#ab8d6d]/90 text-white font-medium text-[10px] px-2.5 py-1 rounded tracking-wider font-sans">
-                  12% OFF
-                </span>
-                <img 
-                  src={ca6Img} 
-                  alt="Emerald choker" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  NECKLACES
-                </span>
-                <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
-                  Emerald choker
-                </h3>
-                <div className="flex justify-between items-center mt-auto">
-                  <div className="flex items-baseline">
-                    <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
-                      ₹ 792
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    </button>
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                    </button>
-                    <a 
-                      href="https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%20Emerald%20choker"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 7 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
-                <span className="absolute top-4 left-4 z-10 bg-black text-white font-semibold text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-sm font-sans">
-                  HOT DEAL
-                </span>
-                <img 
-                  src={ca13Img} 
-                  alt="Traditional Jhumka" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  EARRINGS
-                </span>
-                <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
-                  Traditional Jhumka
-                </h3>
-                <div className="flex justify-between items-center mt-auto">
-                  <div className="flex items-baseline">
-                    <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
-                      ₹ 1,120
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    </button>
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                    </button>
-                    <a 
-                      href="https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%20Traditional%20Jhumka"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.953-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 8 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
-                <span className="absolute top-4 left-4 z-10 bg-black text-white font-semibold text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-sm font-sans">
-                  HOT DEAL
-                </span>
-                <img 
-                  src={ca14Img} 
-                  alt="Second Ruby Stone" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  PARTY WEAR JEWELLERY
-                </span>
-                <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
-                  Second Ruby Stone
-                </h3>
-                <div className="flex justify-between items-center mt-auto">
-                  <div className="flex items-baseline">
-                    <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
-                      ₹ 850
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    </button>
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                    </button>
-                    <a 
-                      href="https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%20Second%20Ruby%20Stone"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 9 */}
-            <div className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-              <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
-                <span className="absolute top-4 left-4 z-10 bg-black text-white font-semibold text-[10px] px-2.5 py-1 rounded tracking-wider uppercase shadow-sm font-sans">
-                  HOT DEAL
-                </span>
-                <img 
-                  src={uImg} 
-                  alt="Wooden Bead Box Bangle" 
-                  className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
-                />
-              </div>
-              <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                  BANGLES
-                </span>
-                <h3 className="font-serif text-base md:text-lg font-bold text-gray-900 mb-4 line-clamp-1">
-                  Wooden Bead Box Bangle
-                </h3>
-                <div className="flex justify-between items-center mt-auto">
-                  <div className="flex items-baseline">
-                    <span className="text-gray-900 font-bold text-sm md:text-base font-serif">
-                      ₹ 1,600
-                    </span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-red-500 hover:border-red-500 hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                      </svg>
-                    </button>
-                    <button className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-black hover:border-black hover:bg-white transition-all duration-300">
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                      </svg>
-                    </button>
-                    <a 
-                      href="https://wa.me/919999999999?text=Hello,%20I%20am%20interested%20in%20purchasing%20the%20Wooden%20Bead%20Box%20Bangle"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full border border-gray-200 bg-gray-50 flex items-center justify-center text-gray-500 hover:text-[#25D366] hover:border-[#25D366] hover:bg-white transition-all duration-300"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.965C16.628 3.825 14.16 2.8 11.535 2.8c-5.44 0-9.866 4.372-9.87 9.802 0 1.714.453 3.39 1.31 4.88L2.012 21.9l4.635-1.746z"/>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
 
           {/* Banner Offers grid */}

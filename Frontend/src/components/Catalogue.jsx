@@ -22,7 +22,7 @@ import ca14Img from '../assets/ca14.png';
 import ca15Img from '../assets/u.png';
 
 // Product Data
-const productsData = [
+export const productsData = [
   {
     id: 1,
     title: "Heritage Gold covering Bangles Set",
@@ -190,7 +190,11 @@ const productsData = [
   }
 ];
 
+const apiHost = window.location.hostname;
+const BACKEND_URL = `http://${apiHost}:5005`;
+
 export default function Catalogue() {
+  const [products, setProducts] = useState(productsData);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [collectionFilter, setCollectionFilter] = useState(() => {
@@ -198,6 +202,39 @@ export default function Catalogue() {
     const match = hash.match(/[?&]collection=([^&]+)/);
     return match ? decodeURIComponent(match[1]) : "All";
   });
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/products`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            const mapped = data.map(p => {
+              const discPercent = p.discount || 0;
+              const originalPrice = discPercent > 0 ? Number(p.price) : null;
+              const sellingPrice = discPercent > 0 ? Number(p.price) * (1 - discPercent / 100) : Number(p.price);
+              return {
+                id: p.id,
+                title: p.name,
+                category: p.categoryName,
+                price: sellingPrice,
+                originalPrice: originalPrice,
+                image: p.imageIds && p.imageIds.length > 0 ? `${BACKEND_URL}/api/admin/images/${p.imageIds[0]}` : null,
+                badgeLeft: p.isFeatured ? "Featured" : "",
+                badgeRight: discPercent > 0 ? `${discPercent}% OFF` : "",
+                collection: p.collectionName || ""
+              };
+            });
+            setProducts(mapped);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch live products from backend:", err);
+      }
+    };
+    fetchProducts();
+  }, []);
 
   useEffect(() => {
     const handleHash = () => {
@@ -219,7 +256,7 @@ export default function Catalogue() {
   };
 
   // Filter products based on search term, category, and collection
-  const filteredProducts = productsData.filter(product => {
+  const filteredProducts = products.filter(product => {
     const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           product.category.toLowerCase().includes(searchTerm.toLowerCase());
     
