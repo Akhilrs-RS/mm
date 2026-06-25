@@ -25,5 +25,8 @@ namespace Backend.Models
         public string Message { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        // Soft-delete: set when moved to recycle bin; null = active
+        public DateTime? DeletedAt { get; set; }
     }
 }

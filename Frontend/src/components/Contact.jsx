@@ -5,20 +5,96 @@ import Nav from './Nav';
 // Import assets
 import contactHeroImg from '../assets/cii.png';
 
+// Popular country codes list
+const COUNTRY_CODES = [
+  { code: '+91', country: 'IN', name: 'India', digits: 10 },
+  { code: '+1', country: 'US', name: 'USA / Canada', digits: 10 },
+  { code: '+44', country: 'GB', name: 'United Kingdom', digits: 10 },
+  { code: '+61', country: 'AU', name: 'Australia', digits: 9 },
+  { code: '+971', country: 'AE', name: 'UAE', digits: 9 },
+  { code: '+966', country: 'SA', name: 'Saudi Arabia', digits: 9 },
+  { code: '+65', country: 'SG', name: 'Singapore', digits: 8 },
+  { code: '+60', country: 'MY', name: 'Malaysia', digits: 9 },
+  { code: '+974', country: 'QA', name: 'Qatar', digits: 8 },
+  { code: '+973', country: 'BH', name: 'Bahrain', digits: 8 },
+  { code: '+968', country: 'OM', name: 'Oman', digits: 8 },
+  { code: '+965', country: 'KW', name: 'Kuwait', digits: 8 },
+  { code: '+64', country: 'NZ', name: 'New Zealand', digits: 9 },
+  { code: '+27', country: 'ZA', name: 'South Africa', digits: 9 },
+  { code: '+49', country: 'DE', name: 'Germany', digits: 11 },
+  { code: '+33', country: 'FR', name: 'France', digits: 9 },
+  { code: '+39', country: 'IT', name: 'Italy', digits: 10 },
+  { code: '+34', country: 'ES', name: 'Spain', digits: 9 },
+  { code: '+31', country: 'NL', name: 'Netherlands', digits: 9 },
+  { code: '+7', country: 'RU', name: 'Russia', digits: 10 },
+  { code: '+86', country: 'CN', name: 'China', digits: 11 },
+  { code: '+81', country: 'JP', name: 'Japan', digits: 10 },
+  { code: '+82', country: 'KR', name: 'South Korea', digits: 10 },
+  { code: '+92', country: 'PK', name: 'Pakistan', digits: 10 },
+  { code: '+880', country: 'BD', name: 'Bangladesh', digits: 10 },
+  { code: '+94', country: 'LK', name: 'Sri Lanka', digits: 9 },
+  { code: '+977', country: 'NP', name: 'Nepal', digits: 10 },
+  { code: '+55', country: 'BR', name: 'Brazil', digits: 11 },
+  { code: '+52', country: 'MX', name: 'Mexico', digits: 10 },
+  { code: '+20', country: 'EG', name: 'Egypt', digits: 10 },
+  { code: '+234', country: 'NG', name: 'Nigeria', digits: 10 },
+  { code: '+254', country: 'KE', name: 'Kenya', digits: 9 },
+];
+
+// Email validation regex
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+
 export default function Contact() {
   const [customerName, setCustomerName] = useState('');
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState(COUNTRY_CODES[0]); // India default
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMsg, setStatusMsg] = useState({ success: false, text: '' });
+  const [codeDropdownOpen, setCodeDropdownOpen] = useState(false);
+  const [codeSearch, setCodeSearch] = useState('');
+
+  // Filter country codes by search
+  const filteredCodes = codeSearch.trim()
+    ? COUNTRY_CODES.filter(c =>
+        c.name.toLowerCase().includes(codeSearch.toLowerCase()) ||
+        c.code.includes(codeSearch) ||
+        c.country.toLowerCase().includes(codeSearch.toLowerCase())
+      )
+    : COUNTRY_CODES;
+
+  const handleEmailChange = (e) => {
+    const val = e.target.value;
+    setEmail(val);
+    if (val && !EMAIL_REGEX.test(val)) {
+      setEmailError('Please enter a valid email address (e.g. name@example.com)');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const handleCountrySelect = (country) => {
+    setSelectedCountry(country);
+    setPhone('');
+    setCodeDropdownOpen(false);
+    setCodeSearch('');
+  };
 
   const handleInquirySubmit = async (e) => {
     e.preventDefault();
     setStatusMsg({ success: false, text: '' });
 
-    if (phone && phone.length !== 10) {
-      setStatusMsg({ success: false, text: 'Please enter a valid 10-digit phone number.' });
+    // Email validation
+    if (!EMAIL_REGEX.test(email)) {
+      setEmailError('Please enter a valid email address (e.g. name@example.com)');
+      return;
+    }
+
+    // Phone validation (optional field but if entered must match country digits)
+    if (phone && phone.length !== selectedCountry.digits) {
+      setStatusMsg({ success: false, text: `Please enter a valid ${selectedCountry.digits}-digit phone number for ${selectedCountry.name}.` });
       return;
     }
 
@@ -26,12 +102,10 @@ export default function Contact() {
 
     try {
       const apiHost = window.location.hostname;
-      const formattedPhone = phone ? `+91 ${phone}` : '';
+      const formattedPhone = phone ? `${selectedCountry.code} ${phone}` : '';
       const response = await fetch(`http://${apiHost}:5005/api/inquiries`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ customerName, email, phone: formattedPhone, message }),
       });
 
@@ -40,8 +114,10 @@ export default function Contact() {
         setStatusMsg({ success: true, text: 'Your inquiry has been submitted successfully. Our specialists will contact you shortly.' });
         setCustomerName('');
         setEmail('');
+        setEmailError('');
         setPhone('');
         setMessage('');
+        setSelectedCountry(COUNTRY_CODES[0]);
       } else {
         setStatusMsg({ success: false, text: data.message || 'Failed to submit inquiry.' });
       }
@@ -52,15 +128,16 @@ export default function Contact() {
       setIsSubmitting(false);
     }
   };
+
   return (
     <div className="min-h-screen bg-white text-black flex flex-col font-sans select-none">
       {/* Navigation Header */}
       <Nav />
 
       {/* Hero Banner Section */}
-      <section 
+      <section
         className="w-full bg-cover bg-center py-20 px-6 md:px-12 lg:px-24 flex items-center relative"
-        style={{ 
+        style={{
           backgroundImage: `url(${contactHeroImg})`,
           minHeight: '280px'
         }}
@@ -156,9 +233,9 @@ export default function Contact() {
 
               {/* Action Buttons */}
               <div className="flex gap-4 mt-2">
-                <a 
+                <a
                   href="https://wa.me/919876543210"
-                  target="_blank" 
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="flex-1 py-3 px-4 bg-[#25D366] hover:bg-[#1fba55] text-white text-xs font-semibold uppercase tracking-wider rounded-lg flex items-center justify-center gap-2 transition-colors duration-300 shadow-sm"
                 >
@@ -167,7 +244,7 @@ export default function Contact() {
                   </svg>
                   WhatsApp Us
                 </a>
-                <a 
+                <a
                   href="tel:+919876543210"
                   className="flex-1 py-3 px-4 bg-[#dfb074] hover:bg-[#d09e5f] text-black text-xs font-semibold uppercase tracking-wider rounded-lg flex items-center justify-center gap-2 transition-colors duration-300 shadow-sm"
                 >
@@ -182,12 +259,12 @@ export default function Contact() {
             {/* Right Column: Google Maps Iframe */}
             <div className="lg:col-span-7">
               <div className="w-full h-full min-h-[300px] sm:min-h-[400px] rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-                <iframe 
+                <iframe
                   title="MM Jewellery Showroom Map"
-                  src="https://maps.google.com/maps?q=Kalbadevi,%20Mumbai,%20India&t=&z=16&ie=UTF8&iwloc=&output=embed" 
+                  src="https://maps.google.com/maps?q=Kalbadevi,%20Mumbai,%20India&t=&z=16&ie=UTF8&iwloc=&output=embed"
                   className="w-full h-full min-h-[300px] sm:min-h-[400px] border-0"
-                  allowFullScreen="" 
-                  loading="lazy" 
+                  allowFullScreen=""
+                  loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
               </div>
@@ -217,8 +294,9 @@ export default function Contact() {
             </div>
           )}
 
-          <form onSubmit={handleInquirySubmit} className="space-y-6">
+          <form onSubmit={handleInquirySubmit} className="space-y-6" noValidate>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Name */}
               <div className="space-y-2">
                 <label className="block text-xs uppercase tracking-wider text-gray-500 font-medium">Your Name</label>
                 <input
@@ -231,35 +309,111 @@ export default function Contact() {
                 />
               </div>
 
+              {/* Email with live validation */}
               <div className="space-y-2">
                 <label className="block text-xs uppercase tracking-wider text-gray-500 font-medium">Email Address</label>
                 <input
                   type="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={handleEmailChange}
                   placeholder="name@example.com"
-                  className="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#aa7c11] transition-colors"
+                  className={`w-full bg-white border rounded-lg px-4 py-3 text-xs text-gray-900 placeholder-gray-400 focus:outline-none transition-colors ${
+                    emailError ? 'border-red-400 focus:border-red-500 bg-red-50' : 'border-gray-200 focus:border-[#aa7c11]'
+                  }`}
                 />
+                {emailError && (
+                  <p className="text-[11px] text-red-500 flex items-center gap-1 mt-1">
+                    <svg className="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    {emailError}
+                  </p>
+                )}
               </div>
             </div>
 
+            {/* Phone with country code dropdown */}
             <div className="space-y-2">
-              <label className="block text-xs uppercase tracking-wider text-gray-500 font-medium">Phone Number</label>
-              <div className="flex rounded-lg border border-gray-200 focus-within:border-[#aa7c11] overflow-hidden transition-colors">
-                <span className="bg-gray-50 border-r border-gray-200 px-3.5 py-3 text-xs text-gray-500 flex items-center select-none font-medium">
-                  +91
-                </span>
+              <label className="block text-xs uppercase tracking-wider text-gray-500 font-medium">
+                Phone Number <span className="text-gray-400 normal-case tracking-normal font-normal">(optional)</span>
+              </label>
+              <div className="flex rounded-lg border border-gray-200 focus-within:border-[#aa7c11] overflow-visible transition-colors relative">
+
+                {/* Country code dropdown trigger */}
+                <div className="relative shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => { setCodeDropdownOpen(v => !v); setCodeSearch(''); }}
+                    className="h-full bg-gray-50 border-r border-gray-200 px-3 py-3 text-xs text-gray-700 flex items-center gap-1.5 hover:bg-gray-100 transition-colors font-medium select-none rounded-l-lg min-w-[80px]"
+                  >
+                    <span className="text-sm">{selectedCountry.country}</span>
+                    <span>{selectedCountry.code}</span>
+                    <svg className={`w-3 h-3 text-gray-400 transition-transform ${codeDropdownOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </svg>
+                  </button>
+
+                  {/* Dropdown panel */}
+                  {codeDropdownOpen && (
+                    <div className="absolute top-full left-0 mt-1 w-64 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden">
+                      {/* Search box */}
+                      <div className="p-2 border-b border-gray-100">
+                        <input
+                          type="text"
+                          value={codeSearch}
+                          onChange={(e) => setCodeSearch(e.target.value)}
+                          placeholder="Search country..."
+                          autoFocus
+                          className="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#aa7c11] transition-colors"
+                        />
+                      </div>
+                      {/* Country list */}
+                      <ul className="max-h-56 overflow-y-auto divide-y divide-gray-50">
+                        {filteredCodes.length === 0 ? (
+                          <li className="px-4 py-3 text-xs text-gray-400 text-center">No results</li>
+                        ) : filteredCodes.map((c) => (
+                          <li key={c.code + c.country}>
+                            <button
+                              type="button"
+                              onClick={() => handleCountrySelect(c)}
+                              className={`w-full text-left px-4 py-2.5 text-xs flex items-center justify-between hover:bg-gold-50 transition-colors ${
+                                selectedCountry.code === c.code && selectedCountry.country === c.country
+                                  ? 'bg-amber-50 text-[#aa7c11] font-semibold'
+                                  : 'text-gray-700'
+                              }`}
+                            >
+                              <span>{c.name}</span>
+                              <span className="text-gray-400 font-mono">{c.code}</span>
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                {/* Phone input */}
                 <input
                   type="tel"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                  placeholder="98765 43210"
-                  className="w-full bg-white px-4 py-3 text-xs text-gray-900 placeholder-gray-400 focus:outline-none"
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, selectedCountry.digits))}
+                  placeholder={`${'0'.repeat(selectedCountry.digits)} (${selectedCountry.digits} digits)`}
+                  className="w-full bg-white px-4 py-3 text-xs text-gray-900 placeholder-gray-400 focus:outline-none rounded-r-lg"
+                  onClick={() => setCodeDropdownOpen(false)}
                 />
               </div>
+              {phone && phone.length > 0 && phone.length < selectedCountry.digits && (
+                <p className="text-[11px] text-amber-600 flex items-center gap-1 mt-1">
+                  <svg className="w-3 h-3 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  {selectedCountry.digits - phone.length} more digit{selectedCountry.digits - phone.length !== 1 ? 's' : ''} needed for {selectedCountry.name}
+                </p>
+              )}
             </div>
 
+            {/* Message */}
             <div className="space-y-2">
               <label className="block text-xs uppercase tracking-wider text-gray-500 font-medium">Your Inquiry Message</label>
               <textarea
@@ -274,7 +428,7 @@ export default function Contact() {
 
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !!emailError}
               className="w-full py-3.5 bg-[#aa7c11] hover:bg-gold-500 text-white text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-300 shadow flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? 'Sending...' : 'Submit Inquiry'}

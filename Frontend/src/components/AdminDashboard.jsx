@@ -25,6 +25,8 @@ export default function AdminDashboard({ onLogout }) {
   const [banners, setBanners] = useState([]);
   const [dbImages, setDbImages] = useState([]);
   const [inquiries, setInquiries] = useState([]);
+  const [trashedInquiries, setTrashedInquiries] = useState([]);
+  const [showTrash, setShowTrash] = useState(false);
   const [galleryItems, setGalleryItems] = useState([]);
 
   // Load states
@@ -588,11 +590,42 @@ export default function AdminDashboard({ onLogout }) {
     if (result) loadData();
   };
 
-  // Inquiries Delete
+  // Inquiries: soft-delete (move to trash)
   const handleInquiryDelete = async (id) => {
-    if (!confirm('Are you sure you want to archive/delete this inquiry?')) return;
+    if (!confirm('Move this inquiry to the recycle bin? It will be permanently deleted after 7 days.')) return;
     const result = await apiFetch(`inquiries/${id}`, { method: 'DELETE' });
-    if (result) loadData();
+    if (result) {
+      loadData();
+      // Also refresh trash list if it's visible
+      const trashed = await apiFetch('inquiries/trash');
+      if (trashed) setTrashedInquiries(trashed);
+    }
+  };
+
+  // Inquiries: restore from trash
+  const handleInquiryRestore = async (id) => {
+    const result = await apiFetch(`inquiries/${id}/restore`, { method: 'POST' });
+    if (result) {
+      const trashed = await apiFetch('inquiries/trash');
+      if (trashed) setTrashedInquiries(trashed);
+      loadData();
+    }
+  };
+
+  // Inquiries: permanently delete from trash
+  const handleInquiryPermanentDelete = async (id) => {
+    if (!confirm('Permanently delete this inquiry? This cannot be undone.')) return;
+    const result = await apiFetch(`inquiries/${id}/permanent`, { method: 'DELETE' });
+    if (result) {
+      const trashed = await apiFetch('inquiries/trash');
+      if (trashed) setTrashedInquiries(trashed);
+    }
+  };
+
+  // Load trash list
+  const loadTrash = async () => {
+    const trashed = await apiFetch('inquiries/trash');
+    if (trashed) setTrashedInquiries(trashed);
   };
 
   // Change Password
@@ -1383,47 +1416,173 @@ export default function AdminDashboard({ onLogout }) {
           {/* 7. CUSTOMER INQUIRIES */}
           {activeTab === 'inquiries' && (
             <div className="space-y-6 animate-fadeIn">
-              <div>
-                <h3 className="font-serif text-2xl font-bold text-white">Customer Inquiries</h3>
-                <p className="text-neutral-400 text-sm font-light">View all submissions received from customers via the contact form.</p>
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <h3 className="font-serif text-2xl font-bold text-white">Customer Inquiries</h3>
+                  <p className="text-neutral-400 text-sm font-light">View all submissions received from customers via the contact form.</p>
+                </div>
+                {/* Trash toggle */}
+                <button
+                  onClick={() => {
+                    const next = !showTrash;
+                    setShowTrash(next);
+                    if (next) loadTrash();
+                  }}
+                  className={`flex items-center gap-2 text-xs font-medium px-4 py-2.5 rounded-lg border transition-colors cursor-pointer ${
+                    showTrash
+                      ? 'bg-red-900/30 border-red-500/40 text-red-300 hover:bg-red-900/50'
+                      : 'bg-neutral-900 border-white/10 text-neutral-400 hover:text-white hover:border-white/20'
+                  }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                  </svg>
+                  {showTrash ? '← Back to Inquiries' : 'Recycle Bin'}
+                  {!showTrash && trashedInquiries.length > 0 && (
+                    <span className="bg-red-500 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                      {trashedInquiries.length}
+                    </span>
+                  )}
+                </button>
               </div>
 
-              {/* Inquiries list */}
-              <div className="bg-neutral-900 border border-white/5 rounded-2xl p-6 space-y-5">
-                {inquiries.length === 0 ? (
-                  <p className="text-neutral-500 text-sm text-center py-8">No customer inquiries found.</p>
-                ) : (
-                  <div className="space-y-5">
-                    {inquiries.map(inq => (
-                      <div key={inq.id} className="bg-black/40 border border-white/8 rounded-xl p-5 space-y-4">
-                        {/* Customer Details Row */}
-                        <div className="flex flex-wrap items-start justify-between gap-3">
-                          <div className="space-y-1">
-                            <h4 className="text-base font-bold text-white tracking-wide">{inq.customerName}</h4>
-                            <p className="text-sm text-neutral-300">
-                              <span className="text-[#aa7c11]">✉</span> {inq.email}
-                              {inq.phone && (
-                                <span className="ml-3 text-neutral-400"><span className="text-[#aa7c11]">📞</span> {inq.phone}</span>
-                              )}
+              {/* ── ACTIVE INQUIRIES ── */}
+              {!showTrash && (
+                <div className="bg-neutral-900 border border-white/5 rounded-2xl p-6 space-y-5">
+                  {inquiries.length === 0 ? (
+                    <p className="text-neutral-500 text-sm text-center py-8">No customer inquiries found.</p>
+                  ) : (
+                    <div className="space-y-5">
+                      {inquiries.map(inq => (
+                        <div key={inq.id} className="bg-black/40 border border-white/8 rounded-xl p-5 space-y-4 group">
+                          {/* Customer Details Row */}
+                          <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div className="space-y-1">
+                              <h4 className="text-base font-bold text-white tracking-wide">{inq.customerName}</h4>
+                              <p className="text-sm text-neutral-300">
+                                <span className="text-[#aa7c11]">✉</span> {inq.email}
+                                {inq.phone && (
+                                  <span className="ml-3 text-neutral-400"><span className="text-[#aa7c11]">📞</span> {inq.phone}</span>
+                                )}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-3 shrink-0">
+                              <span className="text-xs text-neutral-400 bg-white/5 border border-white/5 rounded-lg px-3 py-1.5">
+                                {new Date(inq.createdAt).toLocaleString()}
+                              </span>
+                              {/* Delete (move to trash) button */}
+                              <button
+                                onClick={() => handleInquiryDelete(inq.id)}
+                                title="Move to Recycle Bin"
+                                className="w-8 h-8 flex items-center justify-center rounded-lg border border-white/5 bg-black/30 text-neutral-500 hover:text-red-400 hover:border-red-500/40 hover:bg-red-900/20 transition-all cursor-pointer"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Enquiry Message */}
+                          <div className="bg-black/30 border border-white/5 rounded-lg p-4">
+                            <p className="text-xs uppercase tracking-widest text-neutral-500 font-medium mb-2">Message</p>
+                            <p className="text-sm text-neutral-200 leading-relaxed">
+                              {inq.message}
                             </p>
                           </div>
-                          <span className="text-xs text-neutral-400 bg-white/5 border border-white/5 rounded-lg px-3 py-1.5 shrink-0">
-                            {new Date(inq.createdAt).toLocaleString()}
-                          </span>
                         </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
-                        {/* Enquiry Message */}
-                        <div className="bg-black/30 border border-white/5 rounded-lg p-4">
-                          <p className="text-xs uppercase tracking-widest text-neutral-500 font-medium mb-2">Message</p>
-                          <p className="text-sm text-neutral-200 leading-relaxed">
-                            {inq.message}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
+              {/* ── RECYCLE BIN ── */}
+              {showTrash && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 bg-red-950/20 border border-red-500/20 rounded-xl px-5 py-3">
+                    <svg className="w-4 h-4 text-red-400 shrink-0" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                    </svg>
+                    <p className="text-xs text-red-300">Items in the recycle bin are <strong>permanently deleted after 7 days</strong> from the date they were deleted.</p>
                   </div>
-                )}
-              </div>
+
+                  <div className="bg-neutral-900 border border-white/5 rounded-2xl p-6 space-y-5">
+                    {trashedInquiries.length === 0 ? (
+                      <div className="text-center py-12">
+                        <svg className="w-10 h-10 mx-auto text-neutral-700 mb-3" fill="none" stroke="currentColor" strokeWidth={1} viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                        <p className="text-neutral-500 text-sm">Recycle bin is empty.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {trashedInquiries.map(inq => {
+                          const deletedAt = new Date(inq.deletedAt);
+                          const expiresAt = new Date(deletedAt.getTime() + 7 * 24 * 60 * 60 * 1000);
+                          const daysLeft = Math.max(0, Math.ceil((expiresAt - new Date()) / (1000 * 60 * 60 * 24)));
+                          return (
+                            <div key={inq.id} className="bg-black/40 border border-red-500/10 rounded-xl p-5 space-y-4">
+                              {/* Header */}
+                              <div className="flex flex-wrap items-start justify-between gap-3">
+                                <div className="space-y-1">
+                                  <h4 className="text-base font-bold text-neutral-300 tracking-wide">{inq.customerName}</h4>
+                                  <p className="text-sm text-neutral-500">
+                                    <span>✉</span> {inq.email}
+                                    {inq.phone && <span className="ml-3">📞 {inq.phone}</span>}
+                                  </p>
+                                </div>
+                                <div className="flex flex-col items-end gap-2 shrink-0">
+                                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${
+                                    daysLeft <= 1
+                                      ? 'bg-red-900/40 border-red-500/40 text-red-300'
+                                      : daysLeft <= 3
+                                        ? 'bg-amber-900/30 border-amber-500/30 text-amber-300'
+                                        : 'bg-neutral-800 border-white/10 text-neutral-400'
+                                  }`}>
+                                    {daysLeft === 0 ? 'Expires today' : `${daysLeft}d left`}
+                                  </span>
+                                  <span className="text-[10px] text-neutral-600">
+                                    Deleted {deletedAt.toLocaleDateString()}
+                                  </span>
+                                </div>
+                              </div>
+
+                              {/* Message */}
+                              <div className="bg-black/30 border border-white/5 rounded-lg p-4">
+                                <p className="text-xs uppercase tracking-widest text-neutral-600 font-medium mb-2">Message</p>
+                                <p className="text-sm text-neutral-400 leading-relaxed">{inq.message}</p>
+                              </div>
+
+                              {/* Actions */}
+                              <div className="flex items-center justify-end gap-3 pt-1 border-t border-white/5">
+                                <button
+                                  onClick={() => handleInquiryRestore(inq.id)}
+                                  className="flex items-center gap-1.5 text-xs font-medium text-emerald-400 hover:text-emerald-300 border border-emerald-500/30 hover:border-emerald-400/50 bg-emerald-900/10 hover:bg-emerald-900/20 px-3 py-1.5 rounded-lg transition-all cursor-pointer"
+                                >
+                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                                  </svg>
+                                  Restore
+                                </button>
+                                <button
+                                  onClick={() => handleInquiryPermanentDelete(inq.id)}
+                                  className="flex items-center gap-1.5 text-xs font-medium text-red-400 hover:text-red-300 border border-red-500/30 hover:border-red-400/50 bg-red-900/10 hover:bg-red-900/20 px-3 py-1.5 rounded-lg transition-all cursor-pointer"
+                                >
+                                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                  </svg>
+                                  Delete Forever
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

@@ -52,6 +52,17 @@ try
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         DbInitializer.Seed(dbContext);
+
+        // Auto-purge soft-deleted inquiries older than 7 days
+        var cutoff = DateTime.UtcNow.AddDays(-7);
+        var expired = dbContext.Inquiries.Where(i => i.DeletedAt != null && i.DeletedAt < cutoff).ToList();
+        if (expired.Count > 0)
+        {
+            dbContext.Inquiries.RemoveRange(expired);
+            dbContext.SaveChanges();
+            Console.WriteLine($"Auto-purged {expired.Count} expired inquiries from recycle bin.");
+        }
+
         Console.WriteLine("MySQL database tables and seed data initialized successfully.");
     }
 }
