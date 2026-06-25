@@ -6,6 +6,9 @@ export default function Home() {
   const [products, setProducts] = useState([]);
   const [collections, setCollections] = useState([]);
   const [banners, setBanners] = useState([]);
+  const [showAllCollections, setShowAllCollections] = useState(false);
+  const [showAllFeatured, setShowAllFeatured] = useState(false);
+  const [showAllNewArrivals, setShowAllNewArrivals] = useState(false);
 
   useEffect(() => {
     const apiHost = window.location.hostname;
@@ -48,7 +51,14 @@ export default function Home() {
         if (res.ok) {
           const data = await res.json();
           if (data) {
-            setCollections(data);
+            const mapped = data.map(c => ({
+              id: c.id,
+              title: c.name,
+              description: c.description || 'No description provided.',
+              image: c.imageId ? `http://${apiHost}:5005/api/admin/images/${c.imageId}` : null,
+              badge: c.badge || ''
+            }));
+            setCollections(mapped);
           }
         }
       } catch (err) {
@@ -238,53 +248,77 @@ export default function Home() {
               </h2>
             </div>
             <div>
-              <a 
-                href="/collections" 
-                className="inline-flex items-center text-gray-500 hover:text-gold-600 font-semibold text-xs tracking-wider uppercase transition-all duration-300 group"
-              >
-                view all
-                <span className="ml-1 transform group-hover:translate-x-0.5 transition-transform duration-300">&gt;</span>
-              </a>
+              {collections.length > 3 && (
+                <button 
+                  onClick={() => setShowAllCollections(!showAllCollections)}
+                  className="inline-flex items-center text-gray-500 hover:text-gold-600 font-semibold text-xs tracking-wider uppercase transition-all duration-300 group cursor-pointer"
+                >
+                  {showAllCollections ? 'see less' : 'view all'}
+                  <span className={`ml-1 transform transition-transform duration-300 ${showAllCollections ? '-rotate-90' : 'group-hover:translate-x-0.5'}`}>
+                    &gt;
+                  </span>
+                </button>
+              )}
             </div>
           </div>
 
           {/* Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {collections.map(col => (
-              <div key={col.id} className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
-                <div className="aspect-[4/5] w-full overflow-hidden relative bg-neutral-100 flex items-center justify-center">
-                  {col.imageUrl ? (
+            {(showAllCollections ? collections : collections.slice(0, 3)).map(col => (
+              <div 
+                key={col.id} 
+                className="rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 flex flex-col"
+              >
+                {/* Image Section */}
+                <div className="aspect-square w-full overflow-hidden">
+                  {col.image ? (
                     <img 
-                      src={col.imageUrl} 
-                      alt={col.name} 
+                      src={col.image} 
+                      alt={col.title} 
                       className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" 
                     />
                   ) : (
-                    <span className="text-xs text-neutral-400 uppercase tracking-widest font-light">No Image</span>
-                  )}
-                  {col.badge && (
-                    <span className="absolute top-4 right-4 z-10 bg-gold-400 text-black font-semibold text-[10px] px-2.5 py-1 rounded-full uppercase tracking-wider shadow-sm font-sans">
-                      {col.badge}
-                    </span>
+                    <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 text-sm font-sans font-light">
+                      No Image Available
+                    </div>
                   )}
                 </div>
-                <div className="p-4 sm:p-6 flex flex-col flex-grow text-left">
-                  <span className="text-[#e28743] text-xs font-semibold uppercase tracking-wider mb-2 block font-sans">
-                    Collection
-                  </span>
-                  <h3 className="font-serif text-lg md:text-xl font-bold text-gray-900 mb-2 truncate">
-                    {col.name}
+
+                {/* Dark Bronze Content Section */}
+                <div className="bg-gradient-to-b from-[#8c624c] to-[#4c3222] text-white p-6 flex flex-col flex-grow items-start justify-start min-h-[220px]">
+                  <h3 className="font-serif text-lg md:text-xl font-medium text-white mb-2">
+                    {col.title}
                   </h3>
-                  <p className="text-gray-600 text-sm mb-6 flex-grow font-light font-sans line-clamp-2">
-                    {col.description || 'Curated premium ornaments.'}
+                  <p className="text-white/85 text-xs md:text-sm font-light font-sans leading-relaxed mb-4">
+                    {col.description}
                   </p>
-                  <div>
+
+                  {/* Red Pill Badge */}
+                  <div className="mb-4">
+                    {col.badge && (
+                      <span className="bg-[#e53e3e] text-white text-[10px] md:text-xs font-medium px-3.5 py-1.5 rounded-full uppercase tracking-wider">
+                        {col.badge}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* View Collection Link */}
+                  <div className="mt-auto">
                     <a 
-                      href={`#catalogue?collection=${encodeURIComponent(col.name)}`} 
-                      className="inline-flex items-center text-gray-900 hover:text-gold-600 font-semibold text-xs uppercase tracking-wider transition-all duration-300 group"
+                      href={`#catalogue?collection=${encodeURIComponent(col.title)}`} 
+                      className="inline-flex items-center text-white hover:text-gold-400 text-xs md:text-sm font-semibold transition-colors duration-300 group"
                     >
-                      explore 
-                      <span className="ml-1 transform group-hover:translate-x-0.5 transition-transform duration-300">&gt;</span>
+                      View Collection
+                      <svg 
+                        className="w-4 h-4 ml-1.5 transform group-hover:translate-x-1.5 transition-transform duration-300" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        strokeWidth={2}
+                        viewBox="0 0 24 24" 
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                      </svg>
                     </a>
                   </div>
                 </div>
@@ -303,13 +337,28 @@ export default function Home() {
       <section className="bg-white text-black pb-20 px-6 md:px-12 lg:px-24">
         <div className="container mx-auto">
           {/* Section Header */}
-          <div className="mb-12 text-left">
-            <span className="text-[#aa7c11] font-medium text-sm md:text-base tracking-wider uppercase block mb-3 font-serif">
-              Handpicked pieces
-            </span>
-            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 leading-tight">
-              Featured Collection
-            </h2>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 gap-4">
+            <div>
+              <span className="text-[#aa7c11] font-medium text-sm md:text-base tracking-wider uppercase block mb-3 font-serif">
+                Handpicked pieces
+              </span>
+              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-semibold text-gray-900 leading-tight">
+                Featured Collection
+              </h2>
+            </div>
+            <div>
+              {products.filter(p => p.isFeatured).length > 3 && (
+                <button 
+                  onClick={() => setShowAllFeatured(!showAllFeatured)}
+                  className="inline-flex items-center text-gray-500 hover:text-gold-600 font-semibold text-xs tracking-wider uppercase transition-all duration-300 group cursor-pointer"
+                >
+                  {showAllFeatured ? 'show less' : 'view all'}
+                  <span className={`ml-1 transform transition-transform duration-300 ${showAllFeatured ? '-rotate-90' : 'group-hover:translate-x-0.5'}`}>
+                    &gt;
+                  </span>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Cards Grid */}
@@ -319,7 +368,7 @@ export default function Home() {
                 No featured products yet. Mark products as featured in the Admin Dashboard.
               </div>
             )}
-            {products.filter(p => p.isFeatured).map(product => (
+            {(showAllFeatured ? products.filter(p => p.isFeatured) : products.filter(p => p.isFeatured).slice(0, 3)).map(product => (
               <div key={product.id} className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
                 <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
                   {product.badgeLeft && (
@@ -406,13 +455,17 @@ export default function Home() {
               </h2>
             </div>
             <div>
-              <a 
-                href="/catalogue" 
-                className="inline-flex items-center text-gray-500 hover:text-gold-600 font-semibold text-xs tracking-wider uppercase transition-all duration-300 group"
-              >
-                view all
-                <span className="ml-1 transform group-hover:translate-x-0.5 transition-transform duration-300">&gt;</span>
-              </a>
+              {products.filter(p => p.isNewArrival).length > 3 && (
+                <button 
+                  onClick={() => setShowAllNewArrivals(!showAllNewArrivals)}
+                  className="inline-flex items-center text-gray-500 hover:text-gold-600 font-semibold text-xs tracking-wider uppercase transition-all duration-300 group cursor-pointer"
+                >
+                  {showAllNewArrivals ? 'show less' : 'view all'}
+                  <span className={`ml-1 transform transition-transform duration-300 ${showAllNewArrivals ? '-rotate-90' : 'group-hover:translate-x-0.5'}`}>
+                    &gt;
+                  </span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -423,7 +476,7 @@ export default function Home() {
                 No new arrivals yet. Mark products as new arrivals in the Admin Dashboard.
               </div>
             )}
-            {products.filter(p => p.isNewArrival).map(product => (
+            {(showAllNewArrivals ? products.filter(p => p.isNewArrival) : products.filter(p => p.isNewArrival).slice(0, 3)).map(product => (
               <div key={product.id} className="border border-gray-200 rounded-2xl overflow-hidden bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col">
                 <div className="relative aspect-square w-full overflow-hidden bg-gray-50 flex items-center justify-center">
                   {product.badgeLeft && (

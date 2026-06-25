@@ -1246,13 +1246,7 @@ export default function AdminDashboard({ onLogout }) {
                     <div className="space-y-3">
                       <div className="flex items-start justify-between gap-4">
                         <h4 className="font-serif text-lg font-bold text-white truncate">{off.name}</h4>
-                        <span className={`text-[10px] font-bold uppercase tracking-wider py-1 px-2.5 rounded-full ${
-                          off.isActive 
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-400/20' 
-                            : 'bg-neutral-800 text-neutral-400 border border-neutral-700/50'
-                        }`}>
-                          {off.isActive ? 'Active' : 'Inactive'}
-                        </span>
+
                       </div>
                       
                       <div className="grid grid-cols-2 gap-4 bg-black/40 border border-white/5 rounded-xl p-3.5 text-xs">
@@ -2188,7 +2182,6 @@ export default function AdminDashboard({ onLogout }) {
                     className="w-full bg-black/60 border border-neutral-800 rounded-lg px-4 py-2.5 text-sm text-white focus:outline-none focus:border-gold-400/50"
                   >
                     <option value="Homepage Banner">Homepage Banner</option>
-                    <option value="Collection Banner">Collection Banner</option>
                     <option value="Promotional Banner">Promotional Banner</option>
                   </select>
                 </div>
