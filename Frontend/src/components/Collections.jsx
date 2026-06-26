@@ -3,7 +3,7 @@ import Footer from './Footer';
 import Nav from './Nav';
 
 // Import assets
-import c1Img from '../assets/c1.png';
+import c1Img from '../assets/0.png';
 
 const apiHost = window.location.hostname;
 const BACKEND_URL = `http://${apiHost}:5005`;

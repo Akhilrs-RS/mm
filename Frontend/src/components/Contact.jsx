@@ -3,7 +3,7 @@ import Footer from './Footer';
 import Nav from './Nav';
 
 // Import assets
-import contactHeroImg from '../assets/cii.png';
+import contactHeroImg from '../assets/0.png';
 
 // Popular country codes list
 const COUNTRY_CODES = [

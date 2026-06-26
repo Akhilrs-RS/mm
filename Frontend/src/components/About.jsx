@@ -2,7 +2,7 @@ import Footer from './Footer';
 import Nav from './Nav';
 
 // Import assets
-import aboutHeroImg from '../assets/cii.png';
+import aboutHeroImg from '../assets/0.png';
 import storyImg from '../assets/cz.png';
 
 // Features Data

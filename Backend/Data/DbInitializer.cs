@@ -90,6 +90,38 @@ namespace Backend.Data
                 context.AdminImages.Add(new AdminImage { Name = "ca6.png", ContentType = "image/png", ImageData = ca6Bytes, UploadedAt = DateTime.UtcNow });
                 context.AdminImages.Add(new AdminImage { Name = "ca7.png", ContentType = "image/png", ImageData = ca7Bytes, UploadedAt = DateTime.UtcNow });
 
+                byte[] p1Bytes = File.Exists("../Frontend/src/assets/1.png") ? File.ReadAllBytes("../Frontend/src/assets/1.png") : dummyImageBytes;
+                byte[] p2Bytes = File.Exists("../Frontend/src/assets/2.jpg") ? File.ReadAllBytes("../Frontend/src/assets/2.jpg") : dummyImageBytes;
+                byte[] p3Bytes = File.Exists("../Frontend/src/assets/3.png") ? File.ReadAllBytes("../Frontend/src/assets/3.png") : dummyImageBytes;
+                byte[] p4Bytes = File.Exists("../Frontend/src/assets/4.png") ? File.ReadAllBytes("../Frontend/src/assets/4.png") : dummyImageBytes;
+                byte[] p5Bytes = File.Exists("../Frontend/src/assets/5.png") ? File.ReadAllBytes("../Frontend/src/assets/5.png") : dummyImageBytes;
+                byte[] p6Bytes = File.Exists("../Frontend/src/assets/6.png") ? File.ReadAllBytes("../Frontend/src/assets/6.png") : dummyImageBytes;
+                byte[] p7Bytes = File.Exists("../Frontend/src/assets/7.png") ? File.ReadAllBytes("../Frontend/src/assets/7.png") : dummyImageBytes;
+                byte[] p8Bytes = File.Exists("../Frontend/src/assets/8.png") ? File.ReadAllBytes("../Frontend/src/assets/8.png") : dummyImageBytes;
+                byte[] p9Bytes = File.Exists("../Frontend/src/assets/9.png") ? File.ReadAllBytes("../Frontend/src/assets/9.png") : dummyImageBytes;
+                byte[] p10Bytes = File.Exists("../Frontend/src/assets/10.png") ? File.ReadAllBytes("../Frontend/src/assets/10.png") : dummyImageBytes;
+                byte[] p11Bytes = File.Exists("../Frontend/src/assets/11.png") ? File.ReadAllBytes("../Frontend/src/assets/11.png") : dummyImageBytes;
+                byte[] p12Bytes = File.Exists("../Frontend/src/assets/12.png") ? File.ReadAllBytes("../Frontend/src/assets/12.png") : dummyImageBytes;
+                byte[] p13Bytes = File.Exists("../Frontend/src/assets/13.png") ? File.ReadAllBytes("../Frontend/src/assets/13.png") : dummyImageBytes;
+                byte[] p14Bytes = File.Exists("../Frontend/src/assets/14.png") ? File.ReadAllBytes("../Frontend/src/assets/14.png") : dummyImageBytes;
+                byte[] p15Bytes = File.Exists("../Frontend/src/assets/15.png") ? File.ReadAllBytes("../Frontend/src/assets/15.png") : dummyImageBytes;
+
+                context.AdminImages.Add(new AdminImage { Name = "1.png", ContentType = "image/png", ImageData = p1Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "2.jpg", ContentType = "image/jpeg", ImageData = p2Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "3.png", ContentType = "image/png", ImageData = p3Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "4.png", ContentType = "image/png", ImageData = p4Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "5.png", ContentType = "image/png", ImageData = p5Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "6.png", ContentType = "image/png", ImageData = p6Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "7.png", ContentType = "image/png", ImageData = p7Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "8.png", ContentType = "image/png", ImageData = p8Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "9.png", ContentType = "image/png", ImageData = p9Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "10.png", ContentType = "image/png", ImageData = p10Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "11.png", ContentType = "image/png", ImageData = p11Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "12.png", ContentType = "image/png", ImageData = p12Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "13.png", ContentType = "image/png", ImageData = p13Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "14.png", ContentType = "image/png", ImageData = p14Bytes, UploadedAt = DateTime.UtcNow });
+                context.AdminImages.Add(new AdminImage { Name = "15.png", ContentType = "image/png", ImageData = p15Bytes, UploadedAt = DateTime.UtcNow });
+
                 context.SaveChanges();
             }
 
@@ -119,16 +151,36 @@ namespace Backend.Data
             int ca5Id = imageIds.ElementAtOrDefault(21);
             int ca6Id = imageIds.ElementAtOrDefault(22);
             int ca7Id = imageIds.ElementAtOrDefault(23);
+            
+            int p1Id = imageIds.ElementAtOrDefault(24);
+            int p2Id = imageIds.ElementAtOrDefault(25);
+            int p3Id = imageIds.ElementAtOrDefault(26);
+            int p4Id = imageIds.ElementAtOrDefault(27);
+            int p5Id = imageIds.ElementAtOrDefault(28);
+            int p6Id = imageIds.ElementAtOrDefault(29);
+            int p7Id = imageIds.ElementAtOrDefault(30);
+            int p8Id = imageIds.ElementAtOrDefault(31);
+            int p9Id = imageIds.ElementAtOrDefault(32);
+            int p10Id = imageIds.ElementAtOrDefault(33);
+            int p11Id = imageIds.ElementAtOrDefault(34);
+            int p12Id = imageIds.ElementAtOrDefault(35);
+            int p13Id = imageIds.ElementAtOrDefault(36);
+            int p14Id = imageIds.ElementAtOrDefault(37);
+            int p15Id = imageIds.ElementAtOrDefault(38);
 
             // 4. Seed Categories if empty
             if (!context.Categories.Any())
             {
                 context.Categories.AddRange(
-                    new Category { Name = "Rings", Description = "Premium gold and diamond statement rings." },
-                    new Category { Name = "Necklaces", Description = "Exquisite chokers, necklaces and bridal sets." },
-                    new Category { Name = "Earrings", Description = "Traditional jhumkas and modern diamond studs." },
-                    new Category { Name = "Bangles", Description = "Traditional and meenakari gold bangles." },
-                    new Category { Name = "Anklets", Description = "Designer silver and gold tone anklets." }
+                    new Category { Name = "Rings", Description = "Premium rings." },
+                    new Category { Name = "Necklaces", Description = "Exquisite chokers and necklaces." },
+                    new Category { Name = "Earrings", Description = "Traditional jhumkas and studs." },
+                    new Category { Name = "Bangles", Description = "Traditional and meenakari bangles." },
+                    new Category { Name = "Anklet", Description = "Designer anklets." },
+                    new Category { Name = "Chain", Description = "Chains." },
+                    new Category { Name = "Bridal Sets", Description = "Bridal jewellery sets." },
+                    new Category { Name = "Traditional Jewellery", Description = "Traditional Jewellery." },
+                    new Category { Name = "Party Wear Jewellery", Description = "Party Wear Jewellery." }
                 );
                 context.SaveChanges();
             }
@@ -154,35 +206,42 @@ namespace Backend.Data
             // 6. Seed Products if empty
             if (!context.Products.Any())
             {
-                // Rings
-                var ring1 = new Product { Name = "Classic Solitaire Gold Ring", Description = "A classic gold band topped with a brilliant diamond cut.", Price = 1200, Discount = 10, CategoryId = categories["Rings"], CollectionId = collections["Festival Collections"], IsFeatured = true, IsNewArrival = false, CustomBadge = "Hot Deal", ViewsCount = 450, CreatedAt = DateTime.UtcNow.AddDays(-15) };
-                var ring2 = new Product { Name = "Royal Emerald Statement Ring", Description = "An ornate gold band featuring a large central emerald.", Price = 1800, Discount = 0, CategoryId = categories["Rings"], CollectionId = collections["Bridal Collection"], IsFeatured = true, IsNewArrival = true, CustomBadge = "Featured", ViewsCount = 380, CreatedAt = DateTime.UtcNow.AddDays(-10) };
-                
-                // Necklaces
-                var neck1 = new Product { Name = "Temple Design Gold Tone Necklace Set", Description = "Detailed temple carvings with red stone drops.", Price = 3500, Discount = 15, CategoryId = categories["Necklaces"], CollectionId = collections["Bridal Collection"], IsFeatured = true, IsNewArrival = false, CustomBadge = "Featured", ViewsCount = 920, CreatedAt = DateTime.UtcNow.AddDays(-30) };
-                var neck2 = new Product { Name = "Classic Kundan Choker", Description = "Elegant choker set with real kundan details and pearls.", Price = 2800, Discount = 5, CategoryId = categories["Necklaces"], CollectionId = collections["Wedding Collection"], IsFeatured = false, IsNewArrival = true, CustomBadge = "Best Seller", ViewsCount = 210, CreatedAt = DateTime.UtcNow.AddDays(-5) };
-                
-                // Earrings
-                var ear1 = new Product { Name = "Gold Filigree Jhumka Earrings", Description = "Traditional gold filigree jhumkas with pearl beads.", Price = 950, Discount = 0, CategoryId = categories["Earrings"], CollectionId = collections["Wedding Collection"], IsFeatured = false, IsNewArrival = true, CustomBadge = "Best Seller", ViewsCount = 340, CreatedAt = DateTime.UtcNow.AddDays(-20) };
-                
-                // Bangles
-                var bang1 = new Product { Name = "Meenakari Gold Tone Bangle Set", Description = "Beautiful meenakari detailing on pure gold plating.", Price = 1500, Discount = 25, CategoryId = categories["Bangles"], CollectionId = collections["Bridal Collection"], IsFeatured = true, IsNewArrival = false, CustomBadge = "Hot Deal", ViewsCount = 680, CreatedAt = DateTime.UtcNow.AddDays(-12) };
- 
-                // Anklets
-                var ank1 = new Product { Name = "Silver Plated Designer Anklet Set", Description = "Dainty ghungroo beads on sterling silver plated chains.", Price = 750, Discount = 0, CategoryId = categories["Anklets"], CollectionId = collections["Festival Collections"], IsFeatured = false, IsNewArrival = true, CustomBadge = "Best Seller", ViewsCount = 120, CreatedAt = DateTime.UtcNow.AddDays(-2) };
+                var prod1 = new Product { Name = "Heritage Gold covering Bangles Set", Price = 1600, Discount = 10, CategoryId = categories["Bangles"], CollectionId = collections["Festival Collections"], CustomBadge = "BEST SELLER", CreatedAt = DateTime.UtcNow };
+                var prod2 = new Product { Name = "Stone work Necklace", Price = 2600, Discount = 30, CategoryId = categories["Necklaces"], CollectionId = collections["Bridal Collection"], CustomBadge = "BEST SELLER", CreatedAt = DateTime.UtcNow };
+                var prod3 = new Product { Name = "Bridal Set", Price = 1600, Discount = 10, CategoryId = categories["Bridal Sets"], CollectionId = collections["Bridal Collection"], CustomBadge = "BEST SELLER", CreatedAt = DateTime.UtcNow };
+                var prod4 = new Product { Name = "Temple Gold covering Necklace Set", Price = 6600, Discount = 10, CategoryId = categories["Traditional Jewellery"], CollectionId = collections["Traditional Collection"], CustomBadge = "", CreatedAt = DateTime.UtcNow };
+                var prod5 = new Product { Name = "Celestial Earrings", Price = 400, Discount = 20, CategoryId = categories["Earrings"], CollectionId = collections["Party Wear Collection"], CustomBadge = "BEST SELLER", CreatedAt = DateTime.UtcNow };
+                var prod6 = new Product { Name = "Palakka Choker", Price = 990, Discount = 20, CategoryId = categories["Necklaces"], CollectionId = collections["Traditional Collection"], CustomBadge = "BEST SELLER", CreatedAt = DateTime.UtcNow };
+                var prod7 = new Product { Name = "Couple Rings", Price = 399, Discount = 0, CategoryId = categories["Rings"], CollectionId = collections["Wedding Collection"], CustomBadge = "Hot Deal", CreatedAt = DateTime.UtcNow };
+                var prod8 = new Product { Name = "Anklet Set", Price = 800, Discount = 0, CategoryId = categories["Anklet"], CollectionId = collections["Festival Collections"], CustomBadge = "Hot Deal", CreatedAt = DateTime.UtcNow };
+                var prod9 = new Product { Name = "Elegant Crystal Pendant Chain", Price = 800, Discount = 0, CategoryId = categories["Chain"], CollectionId = collections["Party Wear Collection"], CustomBadge = "Hot Deal", CreatedAt = DateTime.UtcNow };
+                var prod10 = new Product { Name = "Royal Polki Bridal Complete Set", Price = 6175, Discount = 0, CategoryId = categories["Bridal Sets"], CollectionId = collections["Bridal Collection"], CustomBadge = "Hot Deal", CreatedAt = DateTime.UtcNow };
+                var prod11 = new Product { Name = "Temple Design Gold Tone Necklace", Price = 2720, Discount = 0, CategoryId = categories["Traditional Jewellery"], CollectionId = collections["Traditional Collection"], CustomBadge = "Hot Deal", CreatedAt = DateTime.UtcNow };
+                var prod12 = new Product { Name = "Kundan Statement Ring Set", Price = 2720, Discount = 0, CategoryId = categories["Rings"], CollectionId = collections["Bridal Collection"], CustomBadge = "Hot Deal", CreatedAt = DateTime.UtcNow };
+                var prod13 = new Product { Name = "Traditional Jhumka Earrings", Price = 1020, Discount = 0, CategoryId = categories["Earrings"], CollectionId = collections["Traditional Collection"], CustomBadge = "Hot Deal", CreatedAt = DateTime.UtcNow };
+                var prod14 = new Product { Name = "Emerald Party Wear Necklace Set", Price = 1020, Discount = 0, CategoryId = categories["Party Wear Jewellery"], CollectionId = collections["Party Wear Collection"], CustomBadge = "Hot Deal", CreatedAt = DateTime.UtcNow };
+                var prod15 = new Product { Name = "Meenakari Gold Bangle Set", Price = 1800, Discount = 0, CategoryId = categories["Bangles"], CollectionId = collections["Traditional Collection"], CustomBadge = "Hot Deal", CreatedAt = DateTime.UtcNow };
 
-                context.Products.AddRange(ring1, ring2, neck1, neck2, ear1, bang1, ank1);
+                context.Products.AddRange(prod1, prod2, prod3, prod4, prod5, prod6, prod7, prod8, prod9, prod10, prod11, prod12, prod13, prod14, prod15);
                 context.SaveChanges();
 
                 // Map product images
                 context.ProductImages.AddRange(
-                    new ProductImage { ProductId = ring1.Id, ImageId = ringImageId },
-                    new ProductImage { ProductId = ring2.Id, ImageId = ringImageId },
-                    new ProductImage { ProductId = neck1.Id, ImageId = necklaceImageId },
-                    new ProductImage { ProductId = neck2.Id, ImageId = necklaceImageId },
-                    new ProductImage { ProductId = ear1.Id, ImageId = earringImageId },
-                    new ProductImage { ProductId = bang1.Id, ImageId = bangleImageId },
-                    new ProductImage { ProductId = ank1.Id, ImageId = ankletImageId }
+                    new ProductImage { ProductId = prod1.Id, ImageId = p1Id },
+                    new ProductImage { ProductId = prod2.Id, ImageId = p2Id },
+                    new ProductImage { ProductId = prod3.Id, ImageId = p3Id },
+                    new ProductImage { ProductId = prod4.Id, ImageId = p4Id },
+                    new ProductImage { ProductId = prod5.Id, ImageId = p5Id },
+                    new ProductImage { ProductId = prod6.Id, ImageId = p6Id },
+                    new ProductImage { ProductId = prod7.Id, ImageId = p7Id },
+                    new ProductImage { ProductId = prod8.Id, ImageId = p8Id },
+                    new ProductImage { ProductId = prod9.Id, ImageId = p9Id },
+                    new ProductImage { ProductId = prod10.Id, ImageId = p10Id },
+                    new ProductImage { ProductId = prod11.Id, ImageId = p11Id },
+                    new ProductImage { ProductId = prod12.Id, ImageId = p12Id },
+                    new ProductImage { ProductId = prod13.Id, ImageId = p13Id },
+                    new ProductImage { ProductId = prod14.Id, ImageId = p14Id },
+                    new ProductImage { ProductId = prod15.Id, ImageId = p15Id }
                 );
                 context.SaveChanges();
             }
