@@ -48,13 +48,15 @@ export default function Collections() {
       >
         <div className="absolute inset-0 bg-black/15 z-0 pointer-events-none"></div>
 
-        <div className="container mx-auto z-10 flex flex-col justify-center items-center text-center max-w-4xl">
-          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold text-gray-900 leading-tight mb-4">
-            Our Collections
-          </h1>
-          <p className="text-gray-700 text-sm sm:text-base md:text-lg leading-relaxed font-light font-sans max-w-2xl">
-            Browse our complete collection of premium guarantee imitation jewellery
-          </p>
+        <div className="container mx-auto z-10 flex flex-col justify-center items-start text-left max-w-4xl">
+          <div className="max-w-2xl w-full flex flex-col">
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold text-gray-900 leading-tight mb-4 text-center w-full">
+              Our Collections
+            </h1>
+            <p className="text-gray-700 text-sm sm:text-base md:text-lg leading-relaxed font-light font-sans text-left">
+              Browse our complete collection of premium guarantee imitation jewellery
+            </p>
+          </div>
         </div>
       </section>
 
