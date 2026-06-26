@@ -53,12 +53,12 @@ export default function Footer() {
               Collections
             </h4>
             <ul className="space-y-3">
-              <li><a href="#bridal" className="text-gray-400 hover:text-white text-sm transition-colors duration-200 block">Bridal Collection</a></li>
-              <li><a href="#wedding" className="text-gray-400 hover:text-white text-sm transition-colors duration-200 block">Wedding Collection</a></li>
-              <li><a href="#traditional" className="text-gray-400 hover:text-white text-sm transition-colors duration-200 block">Traditional Collection</a></li>
-              <li><a href="#modern" className="text-gray-400 hover:text-white text-sm transition-colors duration-200 block">Modern Collection</a></li>
-              <li><a href="#party" className="text-gray-400 hover:text-white text-sm transition-colors duration-200 block">Party Wear Collection</a></li>
-              <li><a href="#daily" className="text-gray-400 hover:text-white text-sm transition-colors duration-200 block">Daily Wear Collection</a></li>
+              <li><a href="#catalogue?collection=Bridal%20Collection" className="text-gray-400 hover:text-white text-sm transition-colors duration-200 block">Bridal Collection</a></li>
+              <li><a href="#catalogue?collection=Wedding%20Collection" className="text-gray-400 hover:text-white text-sm transition-colors duration-200 block">Wedding Collection</a></li>
+              <li><a href="#catalogue?collection=Traditional%20Collection" className="text-gray-400 hover:text-white text-sm transition-colors duration-200 block">Traditional Collection</a></li>
+              <li><a href="#catalogue?collection=Modern%20Collection" className="text-gray-400 hover:text-white text-sm transition-colors duration-200 block">Modern Collection</a></li>
+              <li><a href="#catalogue?collection=Party%20Wear%20Collection" className="text-gray-400 hover:text-white text-sm transition-colors duration-200 block">Party Wear Collection</a></li>
+              <li><a href="#catalogue?collection=Festival%20Collections" className="text-gray-400 hover:text-white text-sm transition-colors duration-200 block">Festival Collections</a></li>
             </ul>
           </div>
 
